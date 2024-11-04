@@ -9,4 +9,6 @@ router.post('/register', registerUser);
 // Login route
 router.post('/login', loginUser);
 
+console.log("The routes is working.");
+
 export default router;
