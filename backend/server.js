@@ -93,6 +93,7 @@ const UserSession = mongoose.model('UserSession', useSessionSchema);
 // Register route
 app.post('/register', async (req, res) => {
 	const { name, email, password } = req.body;
+	res.send('In the register.')
 
 	try {
 		// Check if user already exists
@@ -116,6 +117,7 @@ app.post('/register', async (req, res) => {
 		})
 
 		res.status(201).json({ message: 'User registered successfully', accessToken, user: { name: newUser.name } });
+		res.send('User registered.')
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
@@ -124,7 +126,7 @@ app.post('/register', async (req, res) => {
 // Login route
 app.post('/login', async (req, res) => {
 	const { email, password } = req.body;
-	res.send('In the register.');
+	res.send('In the login.');
 
 	try {
 		// Find user by email
