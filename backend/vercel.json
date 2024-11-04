@@ -11,5 +11,11 @@
 			"src": "/(.*)",
 			"dest": "/"
 		}
+	],
+	"scripts": [
+		{
+			"install": "npm install",
+			"build": "npm run build"
+		}
 	]
 }
