@@ -93,7 +93,7 @@ const UserSession = mongoose.model('UserSession', useSessionSchema);
 // Register route
 app.post('/register', async (req, res) => {
 	const { name, email, password } = req.body;
-	res.send('In the register.')
+	res.send(req.name, req.email);
 
 	try {
 		// Check if user already exists
