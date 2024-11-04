@@ -24,4 +24,6 @@ mongoose
     .catch((error) => console.error(`MongoDB connection error: ${error}`));
 
 // Export the app as the default for Vercel's serverless function handler
-export default app;
+export default (req, res) => {
+    app(req, res);
+}
