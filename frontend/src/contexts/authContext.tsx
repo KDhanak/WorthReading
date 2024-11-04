@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import api from './api';
 
 interface AuthContextProps {
 	user: { id: string; name: string; email: string } | null;
@@ -19,7 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 	const login = async (email: string, password: string): Promise<boolean> => {
 		try {
-			const response = await axios.post('/api/auth/login', { email, password }, { withCredentials: true });
+			const response = await api.post('/api/auth/login', { email, password }, { withCredentials: true });
 			setUser(response.data.user);
 			setError(null);
 			return true;
@@ -35,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 	const register = async (name: string, email: string, password: string) => {
 		try {
-			const response = await axios.post('/api/auth/register', { name, email, password });
+			const response = await api.post('/api/auth/register', { name, email, password });
 			setUser(response.data.user);
 			setError(null);
 			return true;
@@ -50,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 	};
 
 	const logout = () => {
-		axios.post('/api/auth/logout', {}, { withCredentials: true })
+		api.post('/api/auth/logout', {}, { withCredentials: true })
 			.then(() => {
 				setUser(null);
 				Cookies.remove('token'); // Clear token from cookies on logout
