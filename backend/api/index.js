@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import router from './routes/authRoutes'
+import router from '../routes/authRoutes'
 
 dotenv.config();
 
@@ -26,3 +26,5 @@ mongoose
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch((error) => console.error(`MongoDB connection error: ${error}`));
+
+export default app;
