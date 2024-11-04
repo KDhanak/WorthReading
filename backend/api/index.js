@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import router from '../routes/authRoutes.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -11,18 +12,15 @@ const PORT = process.env.PORT || 5000;
 const F_URL = process.env.FRONTEND_URL;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
-  origin:F_URL,
-  credentials: true
+	origin: F_URL,
+	credentials: true
 }));
 
 app.get('/', (req, res) => {
-  res.send('Hello, JavaScript with Express using ES Modules!');
+	res.send('Hello, JavaScript with Express using ES Modules!');
 });
-
-app.get('/test', (req, res) => {
-  console.log("Testing!!");
-})
 
 app.use('/api/auth', router);
 

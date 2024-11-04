@@ -9,6 +9,9 @@ export default {
 				'primary_2': '#48CFCB',
 				'primary_3': '#229799',
 				'primary_4': '#424242',
+				accent: {
+					'primary_4_light': '#646464',
+				}
 			}
 		},
 	},

@@ -4,7 +4,7 @@ import UserSession from '../models/UserSession.js';
 
 const generateAccessToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: '1d', //Token expires in 1 day.
+		expiresIn: '15m', 
 	});
 };
 
@@ -22,21 +22,19 @@ export const registerUser = async (req, res) => {
 		if (existingUser) {
 			return res.status(400).json({ message: 'User already exists' });
 		}
-
 		// Create new user
 		const newUser = new User({ name, email, password });
 		await newUser.save();
 
-		const accessToken = generateAccessToken(newUser._id);
-		const refreshToken = generateRefreshToken(newUser._id);
+    const accessToken = generateAccessToken(newUser._id);
+    const refreshToken = generateRefreshToken(newUser._id);
 
-		res.cookie('refreshToken', refreshToken, {
-			httpOnly: true,
-			sameSite: "Strict",
-			path: '/',
-			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-		})
-
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: "Strict",
+      path: 'api/auth',
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    })
 		res.status(201).json({ message: 'User registered successfully', accessToken, user: { name: newUser.name } });
 	} catch (error) {
 		res.status(500).json({ message: error.message });
@@ -80,6 +78,41 @@ export const loginUser = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
+};
+
+export const logoutUser = (req, res) => {
+	res.clearCookie('accessToken', {
+	  httpOnly: true,     
+	  sameSite: 'strict', 
+	});
+
+	res.clearCookie('refreshToken', {
+		httpOnly: true,     
+		sameSite: 'strict', 
+	  });
+	
+	res.status(200).json({ message: 'Logout successful' });
+  };
+
+export const accessToken = async (req, res) => {
+	const token = req.cookies.accessToken;
+	if (!token) return res.status(401).json({message: 'No token provided'});
+
+	jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+		if (err) return res.status(403).json({message: 'Invalid token'});
+
+		try {
+			const user = await User.findById(decoded.id).select('name email');
+			if (!user) return res.status(404).json({message: 'User not found'});
+
+			res.json({user: {name: user.name, email: user.email}});
+		} catch (error) {
+			console.error(error);
+			res.status(500).json({message: 'Server error'});
+		}
+
+	})
+
 };
 
 export const refreshAccessToken = async (req, res) => {

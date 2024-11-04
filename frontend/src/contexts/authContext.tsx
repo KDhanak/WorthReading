@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import api from './api';
@@ -18,9 +18,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 	const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
+	useEffect(() => {
+		const checkLoggedInUser = async () => {
+			try {
+				const token = Cookies.get('accessToken');
+				if (token) {
+					const response = await axios.get('/api/auth/validate', { withCredentials: true});
+					setUser(response.data.user);
+				}
+			} catch (error) {
+				console.error('Failed to fetch user', error);
+			}
+		};
+		checkLoggedInUser();
+	}, []);
+
 	const login = async (email: string, password: string): Promise<boolean> => {
 		try {
 			const response = await api.post('/api/auth/login', { email, password }, { withCredentials: true });
+			const token = response.data.accessToken;
+			Cookies.set('accessToken',token, {expires: 1/96, secure:true, sameSite: 'Strict'});
 			setUser(response.data.user);
 			setError(null);
 			return true;
@@ -37,6 +54,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 	const register = async (name: string, email: string, password: string) => {
 		try {
 			const response = await api.post('/api/auth/register', { name, email, password });
+			const token = response.data.accessToken;
+			Cookies.set('accessToken',token, {expires: 1/96, secure:true, sameSite: 'Strict'});
 			setUser(response.data.user);
 			setError(null);
 			return true;
@@ -54,7 +73,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		api.post('/api/auth/logout', {}, { withCredentials: true })
 			.then(() => {
 				setUser(null);
-				Cookies.remove('token'); // Clear token from cookies on logout
+				Cookies.remove('accessToken'); 
+				Cookies.remove('refreshToken');
 			})
 			.catch((error) => console.error('Logout error:', error));
 	};
