@@ -31,7 +31,8 @@ export const registerUser = async (req, res) => {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      sameSite: "Strict",
+      sameSite: "None",
+	  secure:true,
       path: 'api/auth',
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     })
@@ -70,6 +71,7 @@ export const loginUser = async (req, res) => {
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
 			sameSite: 'Strict',
+			secure:true,
 			path: '/',
 			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
 		});

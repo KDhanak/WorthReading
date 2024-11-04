@@ -9,12 +9,12 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const F_URL = process.env.FRONTEND_URL;
+// const F_URL = process.env.FRONTEND_URL;
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-	origin: F_URL,
+	origin: 'https://worth-reading-frontend.vercel.app',
 	credentials: true
 }));
 
