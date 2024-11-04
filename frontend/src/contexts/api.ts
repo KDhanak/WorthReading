@@ -1,8 +1,10 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+const baseURL = import.meta.env.VITE_DEPLOYMENT ? import.meta.env.VITE_BACKEND_URL : 'http://localhost:5000'
+
 const api = axios.create({
-	baseURL: 'http://localhost:5000',
+	baseURL: baseURL,
 	withCredentials: true,
 });
 
