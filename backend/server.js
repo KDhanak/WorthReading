@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/test', (req, res) => {
-  console.log("Testing!!");
+  res.send("Testing!!");
 })
 
 app.use('/api/auth', router);
