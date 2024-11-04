@@ -4,7 +4,7 @@ import UserSession from '../models/UserSession.js';
 
 const generateAccessToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: '1d', //Token expires in 1 day.
+		expiresIn: '15m', 
 	});
 };
 
@@ -80,6 +80,41 @@ export const loginUser = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
+};
+
+export const logoutUser = (req, res) => {
+	res.clearCookie('accessToken', {
+	  httpOnly: true,     
+	  sameSite: 'strict', 
+	});
+
+	res.clearCookie('refreshToken', {
+		httpOnly: true,     
+		sameSite: 'strict', 
+	  });
+	
+	res.status(200).json({ message: 'Logout successful' });
+  };
+
+export const accessToken = async (req, res) => {
+	const token = req.cookies.accessToken;
+	if (!token) return res.status(401).json({message: 'No token provided'});
+
+	jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+		if (err) return res.status(403).json({message: 'Invalid token'});
+
+		try {
+			const user = await User.findById(decoded.id).select('name email');
+			if (!user) return res.status(404).json({message: 'User not found'});
+
+			res.json({user: {name: user.name, email: user.email}});
+		} catch (error) {
+			console.error(error);
+			res.status(500).json({message: 'Server error'});
+		}
+
+	})
+
 };
 
 export const refreshAccessToken = async (req, res) => {

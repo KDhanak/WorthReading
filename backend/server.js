@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import router from './routes/authRoutes.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 const F_URL = process.env.FRONTEND_URL;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
 	origin: F_URL,
 	credentials: true
