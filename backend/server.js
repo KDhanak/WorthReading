@@ -22,14 +22,16 @@ app.get('/test', (req, res) => {
 
 app.use('/api/auth', router);
 
+app.get('/database', (req, res) => {
+	mongoose
+		.connect(process.env.MONGO_URI)
+		.then(() => {
+			res.send('Connected to MongoDB');
+			app.listen(PORT, () => res.send(`Server running on port ${PORT}`));
+		})
+		.catch((error) => res.send(`MongoDB connection error: ${error}`));
+})
 // Connect to MongoDB and start server
-mongoose
-	.connect(process.env.MONGO_URI)
-	.then(() => {
-		console.log('Connected to MongoDB');
-		app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-	})
-	.catch((error) => console.error(`MongoDB connection error: ${error}`));
 
 app.get('/status', (req, res) => {
 	res.json({ message: 'Server is running and connected to MongoDB' });
