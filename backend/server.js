@@ -36,9 +36,9 @@ app.get('/status', (req, res) => {
 });
 
 // Register route
-router.post('/register', registerUser);
+app.post('/register', registerUser);
 
 // Login route
-router.post('/login', loginUser);
+app.post('/login', loginUser);
 
 export default app;
