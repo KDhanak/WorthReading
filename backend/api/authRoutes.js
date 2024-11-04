@@ -1,12 +1,27 @@
 import express from 'express';
-import { loginUser, registerUser } from '../controllers/authControllers.js';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import { loginUser, registerUser } from '../controllers/authControllers';
 
-const router = express.Router();
+dotenv.config();
+
+const app = express();
+
+app.use(express.json());
+app.use(cors());
 
 // Register route
-router.post('/register', registerUser);
+app.post('/register', registerUser);
 
 // Login route
-router.post('/login', loginUser);
+app.post('/login', loginUser);
 
-export default router;
+// Connect to MongoDB only once
+mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((error) => console.error(`MongoDB connection error: ${error}`));
+
+// Export the app as the default for Vercel's serverless function handler
+export default app;
