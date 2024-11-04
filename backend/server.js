@@ -124,6 +124,7 @@ app.post('/register', async (req, res) => {
 // Login route
 app.post('/login', async (req, res) => {
 	const { email, password } = req.body;
+	res.send('In the register.');
 
 	try {
 		// Find user by email
