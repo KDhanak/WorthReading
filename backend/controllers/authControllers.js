@@ -37,7 +37,7 @@ export const registerUser = async (req, res) => {
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     })
 
-    res.status(201).json({ message: 'User registered successfully', accessToken });
+    res.status(201).json({ message: 'User registered successfully', accessToken, user: {name: newUser.name}});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -76,13 +76,13 @@ export const loginUser = async (req, res) => {
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
     
-    res.status(200).json({ message: 'Login successful', accessToken, user: { id: user._id, name: user.name, email: user.email } });
+    res.status(200).json({ message: 'Login successful', accessToken, user: { name: user.name } });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-export const refreshAccessTOken = async (req, res) => {
+export const refreshAccessToken = async (req, res) => {
   const {refreshToken} = req.cookies;
 
   if (!refreshToken) return res.status(401).json({message: 'Not authorised, no token found'});

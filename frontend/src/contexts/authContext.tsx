@@ -4,8 +4,8 @@ import Cookies from 'js-cookie';
 
 interface AuthContextProps {
 	user: { id: string; name: string; email: string } | null;
-	login: (email: string, password: string) => Promise<void>;
-	register: (name: string, email: string, password: string) => Promise<void>;
+	login: (email: string, password: string) => Promise<boolean>;
+	register: (name: string, email: string, password: string) => Promise<boolean>;
 	logout: () => void;
 	isAuthenticated: boolean;
 	error: string | null;
@@ -17,17 +17,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 	const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
-	const login = async (email: string, password: string): Promise<void> => {
+	const login = async (email: string, password: string): Promise<boolean> => {
 		try {
 			const response = await axios.post('/api/auth/login', { email, password }, { withCredentials: true });
 			setUser(response.data.user);
-			setError(response.data.message);
+			setError(null);
+			return true;
 		} catch (error: unknown) {
 			if (axios.isAxiosError(error) && error.response) {
 				setError(error.response.data.message);
 			} else {
 				setError('An error occurred during login');
 			}
+			return false;
 		}
 	};
 
@@ -35,13 +37,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		try {
 			const response = await axios.post('/api/auth/register', { name, email, password });
 			setUser(response.data.user);
-			setError(response.data.message);
+			setError(null);
+			return true;
 		} catch (error) {
 			if (axios.isAxiosError(error) && error.response) {
 				setError(error.response.data.message || 'Registration Failed');
 			} else {
 				setError('An error occurred during login');
 			}
+			return false;
 		}
 	};
 
