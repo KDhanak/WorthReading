@@ -22,8 +22,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		const checkLoggedInUser = async () => {
 			try {
 				const token = Cookies.get('accessToken');
+				console.log(token);
 				if (token) {
 					const response = await api.get('/api/auth/validate', { withCredentials: true});
+					console.log(response);
 					setUser(response.data.user);
 				}
 			} catch (error) {
