@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import router from './routes/authRoutes.js'
+import { loginUser, registerUser } from './controllers/authControllers.js';
 
 dotenv.config();
 
@@ -20,8 +20,6 @@ app.get('/test', (req, res) => {
 	res.send("Testing!!");
 })
 
-app.use('/api/auth', router);
-
 app.get('/database', (req, res) => {
 	mongoose
 		.connect(process.env.MONGO_URI)
@@ -36,5 +34,11 @@ app.get('/database', (req, res) => {
 app.get('/status', (req, res) => {
 	res.json({ message: 'Server is running and connected to MongoDB' });
 });
+
+// Register route
+router.post('/register', registerUser);
+
+// Login route
+router.post('/login', loginUser);
 
 export default app;
