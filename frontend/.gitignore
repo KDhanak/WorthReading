@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 .env
 .vercel
+images/
+Sample Data.json

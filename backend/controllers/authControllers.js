@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import UserSession from '../models/UserSession.js';
+import Book from '../models/Book.js';
 
 const generateAccessToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: '15m', 
+		expiresIn: '15m',
 	});
 };
 
@@ -78,7 +79,7 @@ export const loginUser = async (req, res) => {
 
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
-			sameSite: 'Strict',
+			sameSite: 'None',
 			secure:true,
 			path: '/',
 			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -110,23 +111,23 @@ export const logoutUser = (req, res) => {
 	  });
 	
 	res.status(200).json({ message: 'Logout successful' });
-  };
+};
 
 export const accessToken = async (req, res) => {
 	const token = req.cookies.accessToken;
-	if (!token) return res.status(401).json({message: 'No token provided'});
+	if (!token) return res.status(401).json({ message: 'No token provided' });
 
 	jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-		if (err) return res.status(403).json({message: 'Invalid token'});
+		if (err) return res.status(403).json({ message: 'Invalid token' });
 
 		try {
 			const user = await User.findById(decoded.id).select('name email');
-			if (!user) return res.status(404).json({message: 'User not found'});
+			if (!user) return res.status(404).json({ message: 'User not found' });
 
-			res.json({user: {name: user.name, email: user.email}});
+			res.json({ user: { name: user.name, email: user.email } });
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({message: 'Server error'});
+			res.status(500).json({ message: 'Server error' });
 		}
 
 	})
@@ -149,3 +150,18 @@ export const refreshAccessToken = async (req, res) => {
 		res.status(401).json({ message: "Not authorized, token failed." })
 	}
 }
+
+export const fetchAllBooks = async (req, res) => {
+	try {
+		const books = await Book.find();
+		res.status(200).json({
+			message: "Books fetched successfully",
+			data: books,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: 'Failed to fetch the books',
+			error: error.message,
+		});
+	}
+};

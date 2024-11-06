@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginUser, registerUser, accessToken, logoutUser } from '../controllers/authControllers.js';
+import { loginUser, registerUser, accessToken, logoutUser, fetchAllBooks } from '../controllers/authControllers.js';
 
 const router = express.Router();
 
@@ -13,6 +13,9 @@ router.post('/login', loginUser);
 router.get('/validate', accessToken);
 
 // logout route
-router.post('/logout', logoutUser)
+router.post('/logout', logoutUser);
+
+//fetch the books
+router.get('/books', fetchAllBooks);
 
 export default router;
