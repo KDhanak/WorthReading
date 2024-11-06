@@ -24,7 +24,6 @@ const NavBar: React.FC = () => {
         e.preventDefault();
         setLoading(true);
         await logout();
-        navigate('/login');
     }
 
     const handleSignIn = async (e: any) => {
@@ -106,7 +105,7 @@ const NavBar: React.FC = () => {
                         </button>
                         {isAuthenticated ? (
                             <div>
-                                <button id="userDropdownButton1" onClick={toggleDropdown} data-dropdown-toggle="userDropdown1" type="button" className="inline-flex items-center rounded-lg justify-center p-2 text-sm font-medium leading-none">
+                                <button id="userDropdownButton1" onClick={toggleDropdown} data-dropdown-toggle="userDropdown1" type="button" className="inline-flex border-2 border-primary_2 items-center rounded-lg justify-center p-2 text-sm font-medium leading-none">
                                     <svg className="w-5 h-5 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-width="2" d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                     </svg>
@@ -116,7 +115,7 @@ const NavBar: React.FC = () => {
                                     </svg>
                                 </button>
                                 {isDropdownOpen && (
-                                    <div id="userDropdown1" className=" absolute divide-y rounded-lg text-primary_2 bg-primary_4 shadow">
+                                    <div id="userDropdown1" className="z-50 mt-0.5 absolute divide-y rounded-lg text-primary_2 bg-primary_4 shadow">
                                         <ul className="p-2 text-start text-sm font-medium text-primary_1">
                                             <li><a href="#" title="" className="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent-primary_4_light"> My Account </a></li>
                                             <li><a href="#" title="" className="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent-primary_4_light"> My Orders </a></li>

@@ -2,6 +2,8 @@ import './App.css';
 import Helmet from 'react-helmet';
 import NavBar from './components/navbar/navbar';
 import Categories from './components/categories/categories';
+import { BookProvider } from './contexts/bookContext';
+import Books from './components/books/books';
 
 function App() {
 	return (
@@ -12,6 +14,9 @@ function App() {
 			</Helmet>
 			<NavBar />
 			<Categories />
+			<BookProvider>
+				<Books />
+			</BookProvider>
 		</>
 	)
 }

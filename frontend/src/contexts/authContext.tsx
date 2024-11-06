@@ -26,7 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 					const response = await axios.get('/api/auth/validate', { withCredentials: true});
 					setUser(response.data.user);
 				}
-			} catch (error) {
+			} catch (error: unknown) {
 				console.error('Failed to fetch user', error);
 			}
 		};
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 			setUser(response.data.user);
 			setError(null);
 			return true;
-		} catch (error) {
+		} catch (error: unknown) {
 			if (axios.isAxiosError(error) && error.response) {
 				setError(error.response.data.message || 'Registration Failed');
 			} else {
@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 				Cookies.remove('accessToken'); 
 				Cookies.remove('refreshToken');
 			})
-			.catch((error) => console.error('Logout error:', error));
+			.catch((error: unknown) => console.error('Logout error:', error));
 	};
 
 	const isAuthenticated = !!user;
