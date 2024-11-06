@@ -15,7 +15,7 @@ interface Books {
     publisher?: string;
     availableCopies: number;
     coverImageUrl: string;
-    book: number;
+    price: number;
 }
 
 interface BookContextProps {
