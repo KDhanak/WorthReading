@@ -2,7 +2,6 @@ import './App.css';
 import Helmet from 'react-helmet';
 import Categories from './components/categories/categories';
 import Books from './components/books/books';
-import BookDescription from './components/bookDescription/bookDescription';
 
 function App() {
 	return (
