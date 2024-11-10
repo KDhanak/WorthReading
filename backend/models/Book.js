@@ -18,6 +18,8 @@ const bookSchema = new mongoose.Schema({
     price: {
       type: Number,
       required: true,
+      default: 0,
+      min:0,
     },
     genres: {
       type: [String],
@@ -52,6 +54,29 @@ const bookSchema = new mongoose.Schema({
     coverImageUrl: {
       type: String,
       trim: true,
+    },
+    coverType: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    dimensions: {
+      type: String,
+      required: true,
+    },
+    reviews: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
+    },
+    stars: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
   }, {
     timestamps: true, // Automatically adds createdAt and updatedAt timestamps

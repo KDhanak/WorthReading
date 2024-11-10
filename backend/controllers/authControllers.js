@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import UserSession from '../models/UserSession.js';
 import Book from '../models/Book.js';
+import mongoose from 'mongoose';
 
 const generateAccessToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -117,8 +118,8 @@ export const accessToken = async (req, res) => {
 	const token = req.cookies.accessToken;
 	if (!token) return res.status(401).json({ message: 'No token provided' });
 
-	jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-		if (err) return res.status(403).json({ message: 'Invalid token' });
+	jwt.verify(token, process.env.JWT_SECRET, async (error, decoded) => {
+		if (error) return res.status(403).json({ message: 'Invalid token' });
 
 		try {
 			const user = await User.findById(decoded.id).select('name email');
@@ -155,7 +156,7 @@ export const fetchAllBooks = async (req, res) => {
 	try {
 		const books = await Book.find();
 		res.status(200).json({
-			message: "Books fetched successfully",
+			message: 'Books fetched successfully',
 			data: books,
 		});
 	} catch (error) {
@@ -165,3 +166,26 @@ export const fetchAllBooks = async (req, res) => {
 		});
 	}
 };
+
+export const fetchBookById = async (req, res) => {
+	try {
+		const bookId = req.params.id
+		const book = await Book.findById(bookId);
+
+		if (book) {
+			res.status(200).json({
+				message: 'Book fetched successfully',
+				data: book,
+			});
+		} else{
+			res.status(404).json({
+				message: 'Book not found',
+			});
+		}
+	} catch (error) {
+		res.status(500).json({
+			message: 'Internal Server Error',
+			error: error.message
+		});
+	}
+}

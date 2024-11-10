@@ -12,6 +12,16 @@ export default {
 				accent: {
 					'primary_4_light': '#646464',
 				}
+			},
+			screens: {
+				'sMobile': '320px',
+				'mMobile': '375px',
+				'lMobile': '425px',
+				'tablet': '768px',
+				'laptop': '1024px',
+				'lLaptop': '1440px',
+				'monitor': '1920px',
+				'4K': '2560px',
 			}
 		},
 	},
