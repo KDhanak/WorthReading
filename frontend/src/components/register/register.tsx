@@ -1,7 +1,8 @@
 import Helmet from 'react-helmet';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/authContext';
 import Loading from '../loading/loading';
+import logo from '../../../public/logo.png';
 import { useNavigate  } from 'react-router-dom';
 
 const Register: React.FC = () => {
@@ -9,8 +10,9 @@ const Register: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const {register, error} = useAuth();
-    const [loading, setLoading] = useState<boolean>();
+    const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate ();
+
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -28,7 +30,7 @@ const Register: React.FC = () => {
         }
     };
 
-    if (loading) return <Loading />
+    if (loading) return <Loading />;
 
     return (
         <>
@@ -39,8 +41,11 @@ const Register: React.FC = () => {
             <section className="bg-primary_1 text-primary_4">
                 <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                     <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900">
-                        <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo" />
-                        WorthReading    
+                    <img
+                            className="block w-auto h-28"
+                            src={logo}
+                            alt="Worth a Read."
+                        />    
                     </a>
                     <div className="w-full bg-primary_2 rounded-lg shadow border border-primary_4 md:mt-0 sm:max-w-md xl:p-0">
                         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">

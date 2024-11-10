@@ -4,12 +4,15 @@ import './index.css'
 import { RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './contexts/authContext';
 import router from './routes/routes';
+import { BookProvider } from './contexts/bookContext';
 
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
 		<AuthProvider>
-			<RouterProvider router={router} />
+			<BookProvider>
+				<RouterProvider router={router} />
+			</BookProvider>
 		</AuthProvider>
 	</StrictMode>,
 )
