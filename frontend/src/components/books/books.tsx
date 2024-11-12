@@ -4,8 +4,7 @@ import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
 
 const Books: React.FC = () => {
-    const { setBook, books, error } = useBook();
-    const [loading, setLoading] = useState<boolean>(false);
+    const { setBook, books, error, loading } = useBook();
     const navigate = useNavigate();
 
     const fetchSelectedBook = (bookId: string) => {
