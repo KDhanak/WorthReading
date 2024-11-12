@@ -27,15 +27,29 @@ const NavBar: React.FC = () => {
     }
 
     const handleLogout = async (e: any) => {
-        e.preventDefault();
-        setLoading(true);
-        await logout();
+        try {
+            e.preventDefault();
+            setLoading(true);
+            logout();
+            navigate('/');
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+        
     }
 
     const handleSignIn = async (e: any) => {
-        e.preventDefault();
-        setLoading(true);
-        navigate('/login');
+        try {
+            e.preventDefault();
+            setLoading(true);
+            navigate('/login');     
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
     useEffect(() => {
