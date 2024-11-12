@@ -52,7 +52,7 @@ const Register: React.FC = () => {
                             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                                 Create an account
                             </h1>
-                            {error && <p className="text-red-500">{error}</p>}
+                            {error && <p className="text-red-700 font-bold">{error}</p>}
                             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                             <div>
                                     <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Your name</label>
