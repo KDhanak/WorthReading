@@ -1,8 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import UserSession from '../models/UserSession.js';
-import Book from '../models/Book.js';
-import mongoose from 'mongoose';
 
 const generateAccessToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -136,56 +134,26 @@ export const accessToken = async (req, res) => {
 };
 
 export const refreshAccessToken = async (req, res) => {
-	const { refreshToken } = req.cookies;
+    const { refreshToken } = req.cookies;
 
-	if (!refreshToken) return res.status(401).json({ message: 'Not authorised, no token found' });
+    if (!refreshToken) return res.status(401).json({ message: 'Not authorized, no token found' });
 
-	const session = await UserSession.findOne({ refreshToken });
-	if (!session) return res.status(401).json({ message: 'Invalid session, please login' });
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-	try {
-		const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-		const accessToken = jwt.sign({ id: decoded.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-		res.json({ token: accessToken });
-	} catch (error) {
-		res.status(401).json({ message: "Not authorized, token failed." })
-	}
-}
+        const session = await UserSession.findOne({ refreshToken });
+        if (!session) {
+            return res.status(401).json({ message: 'Invalid session, please login' });
+        }
 
-export const fetchAllBooks = async (req, res) => {
-	try {
-		const books = await Book.find();
-		res.status(200).json({
-			message: 'Books fetched successfully',
-			data: books,
-		});
-	} catch (error) {
-		res.status(500).json({
-			message: 'Failed to fetch the books',
-			error: error.message,
-		});
-	}
+        const accessToken = jwt.sign(
+            { id: decoded.id }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '15m' } 
+        );
+
+        res.json({ token: accessToken });
+    } catch (error) {
+        res.status(401).json({ message: "Not authorized, token failed." });
+    }
 };
-
-export const fetchBookById = async (req, res) => {
-	try {
-		const bookId = req.params.id
-		const book = await Book.findById(bookId);
-
-		if (book) {
-			res.status(200).json({
-				message: 'Book fetched successfully',
-				data: book,
-			});
-		} else{
-			res.status(404).json({
-				message: 'Book not found',
-			});
-		}
-	} catch (error) {
-		res.status(500).json({
-			message: 'Internal Server Error',
-			error: error.message
-		});
-	}
-}

@@ -2,7 +2,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import router from '../routes/authRoutes.js';
+import authRouter from './routes/authRoutes.js';
+import bookRouter from './routes/bookRoutes.js';
+import cartRouter from './routes/cartRoutes.js';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
@@ -22,7 +24,9 @@ app.get('/', (req, res) => {
 	res.send('Hello, JavaScript with Express using ES Modules!');
 });
 
-app.use('/api/auth', router);
+app.use('/api/auth', authRouter);
+app.use('/api/book', bookRouter);
+app.use('/api/cart', cartRouter);
 
 // Connect to MongoDB and start server
 mongoose

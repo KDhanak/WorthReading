@@ -52,7 +52,7 @@ export const BookProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(true);
         setError(null);
         try {
-            const response = await api.get<{ data: Books[] }>('/api/auth/books');
+            const response = await api.get<{ data: Books[] }>('/api/book');
             setBooks(response.data.data);
             applyCategoryFilter(response.data.data, selectedCategory);
             return true;
@@ -94,7 +94,7 @@ export const BookProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(true);
         setError(null);
         try {
-            const response = await api.get<{ data: Books }>(`/api/auth/book/${id}`);
+            const response = await api.get<{ data: Books }>(`/api/book/${id}`);
             if (book?._id !== response?.data.data._id) {
                 setBook(response.data.data);
             }

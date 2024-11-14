@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CiSquarePlus } from "react-icons/ci";
 import { CiSquareMinus } from "react-icons/ci";
 import './custom.css'
 
 interface CounterProps {
     availableCopies: number;
+    onQuantityChange: (quantity: number) => void;
 }
 
-const Counter:React.FC<CounterProps> = ({availableCopies}) => {
+const Counter: React.FC<CounterProps> = ({ availableCopies, onQuantityChange }) => {
     const [quantity, setQuantity] = useState(1);
+
+    useEffect(() => {
+        onQuantityChange(quantity);
+    }, [quantity, onQuantityChange]);
 
     const incrementQuantity = () => {
         if (quantity < availableCopies) {
