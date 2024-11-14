@@ -27,16 +27,23 @@ interface BookContextProps {
     book: Books | null;
     setBook: React.Dispatch<React.SetStateAction<Books | null>>;
     books: Books[];
+    filteredBook: Books[];
     loading: boolean;
     error: string | null;
     fetchBooks: () => Promise<boolean>;
     fetchBookById: (id: string) => Promise<boolean>;
+    filterBooksByCategory: (category: string | null) => void;
+    selectedCategory: string | null;
+    resetCategory: () => void;
+    filterBooksByTitle: (title: string) => void;
 };
 
 const BookContext = createContext<BookContextProps | undefined>(undefined);
 
 export const BookProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [books, setBooks] = useState<Books[]>([]);
+    const [filteredBook, setFilteredBooks] = useState<Books[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [book, setBook] = useState<Books | null>(null);
@@ -47,6 +54,7 @@ export const BookProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             const response = await api.get<{ data: Books[] }>('/api/auth/books');
             setBooks(response.data.data);
+            applyCategoryFilter(response.data.data, selectedCategory);
             return true;
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.message) {
@@ -57,9 +65,30 @@ export const BookProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return false;
         } finally {
             setLoading(false);
-            return false;
         }
     };
+
+    const filterBooksByCategory  = (category: string | null) => {
+        setSelectedCategory(category);
+        applyCategoryFilter(books, category);
+    };
+
+    const applyCategoryFilter = (books: Books[], category: string | null) => {
+        if (category) {
+            setFilteredBooks(books.filter(book => book.genres.includes(category)));
+        } else {
+            setFilteredBooks(books);
+        }
+    };
+
+    const resetCategory = () => {
+        setSelectedCategory(null);
+        setFilteredBooks(books);
+    };
+
+    const filterBooksByTitle = (title: string) => {
+        setFilteredBooks(books.filter(book => book?.title.toLowerCase().includes(title.toLowerCase())));
+    }
 
     const fetchBookById = async (id: string) => {
         setLoading(true);
@@ -79,7 +108,6 @@ export const BookProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return false;
         } finally {
             setLoading(false);
-            return false;
         }
     }
 
@@ -88,7 +116,7 @@ export const BookProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     return (
-        <BookContext.Provider value={{setBook, book, books, loading, error, fetchBooks, fetchBookById }}>
+        <BookContext.Provider value={{setBook, book, books, loading, error, fetchBooks, fetchBookById, filteredBook, filterBooksByCategory, selectedCategory, resetCategory, filterBooksByTitle }}>
             {children}
         </BookContext.Provider>
     )
