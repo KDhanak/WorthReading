@@ -106,6 +106,7 @@ const NavBar: React.FC = () => {
                             <div>
                                 <button
                                     className="inline-flex items-center rounded-lg justify-center p-2 text-sm font-medium leading-none"
+                                    onClick={() => navigate('/cart')}
                                 >
                                     <span className="sr-only">Cart</span>
                                     <svg
@@ -124,21 +125,6 @@ const NavBar: React.FC = () => {
                                         />
                                     </svg>
                                     <span className="hidden sm:flex">My Cart</span>
-                                    <svg
-                                        className="hidden sm:flex w-4 h-4 text-gray-900"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="m19 9-7 7-7-7"
-                                        />
-                                    </svg>
                                 </button>
                                 <button
                                     id="userDropdownButton1"

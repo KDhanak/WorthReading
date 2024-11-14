@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useBook } from '../../contexts/bookContext';
+import { useCart } from '../../contexts/cartContext';
 import StarRating from './starRating';
 import Loading from '../loading/loading';
 import { useParams } from 'react-router-dom';
@@ -10,12 +11,20 @@ import Counter from './counter';
 const BookDescription: React.FC = () => {
     const { fetchBookById, book, error, loading } = useBook();
     const { bookId } = useParams<{ bookId: string }>();
+    const { addItemToCart } = useCart();
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         if (bookId && !book && !loading) {
             fetchBookById(bookId);
         }
     }, [bookId, book, fetchBookById]);
+
+    const handleAddToCart = () => {
+        if (book?._id) { 
+            addItemToCart(book._id, quantity);
+        }
+    };
 
     if (loading) return <Loading />;
 
@@ -44,10 +53,11 @@ const BookDescription: React.FC = () => {
                         </div>
                     </div>
                     <div className='flex mt-3 gap-x-6'>
-                        <Counter availableCopies={book?.availableCopies || 0} />
+                        <Counter availableCopies={book?.availableCopies || 0} onQuantityChange = {setQuantity} />
                         <button
                             type="submit"
                             className="w-1/4 text-primary_2 bg-primary_4 focus:ring-4 focus:outline-none focus:ring-primary_3 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                            onClick={handleAddToCart}
                         >
                             Add to Cart
                         </button>
