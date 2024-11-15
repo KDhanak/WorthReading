@@ -4,8 +4,7 @@ import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
 
 const Books: React.FC = () => {
-    const { setBook, filteredBook, books, error } = useBook();
-    const [loading, setLoading] = useState<boolean>(false);
+    const { setBook, filteredBook, loading, books, error } = useBook();
     const navigate = useNavigate();
     const { selectedCategory, filterBooksByTitle } = useBook();
     const [query, setQuery] = useState('');
@@ -14,6 +13,8 @@ const Books: React.FC = () => {
         setBook(null);
         navigate(`/book/${bookId}`);
     };
+
+    if (loading) return <Loading />;
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(event.target.value);
@@ -24,7 +25,6 @@ const Books: React.FC = () => {
         filterBooksByTitle(query);
     }
 
-    if (loading) return <Loading />;
     return (
         <div className='mx-52'>
             <div className='flex w-full items-center justify-between mt-3'>

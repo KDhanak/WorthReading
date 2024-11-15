@@ -23,7 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 			try {
 				const token = Cookies.get('accessToken');
 				if (token) {
-					const response = await axios.get('/api/auth/validate', { withCredentials: true});
+					const response = await api.get('/api/auth/validate', { withCredentials: true });
 					console.log(response);
 					setUser(response.data.user);
 				}
@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		try {
 			const response = await api.post('/api/auth/login', { email, password }, { withCredentials: true });
 			const token = response.data.accessToken;
-			Cookies.set('accessToken',token, {expires: 1/96, secure:true, sameSite: 'None', domain: '.vercel.app'});
+			Cookies.set('accessToken', token, { expires: 1 / 96, secure: true, sameSite: 'None', domain: '.vercel.app' });
 			setUser(response.data.user);
 			setError(null);
 			return true;
@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		try {
 			const response = await api.post('/api/auth/register', { name, email, password });
 			const token = response.data.accessToken;
-			Cookies.set('accessToken',token, {expires: 1/96, secure:true, sameSite: 'None', domain: '.vercel.app'});
+			Cookies.set('accessToken', token, { expires: 1 / 96, secure: true, sameSite: 'None', domain: '.vercel.app' });
 			setUser(response.data.user);
 			setError(null);
 			return true;
@@ -74,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		api.post('/api/auth/logout', {}, { withCredentials: true })
 			.then(() => {
 				setUser(null);
-				Cookies.remove('accessToken'); 
+				Cookies.remove('accessToken');
 				Cookies.remove('refreshToken');
 			})
 			.catch((error: unknown) => console.error('Logout error:', error));
