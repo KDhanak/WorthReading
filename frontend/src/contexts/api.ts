@@ -8,6 +8,11 @@ const api = axios.create({
 	withCredentials: true,
 });
 
+const accessToken = Cookies.get('accessToken');
+if(accessToken) {
+	api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+}
+
 api.interceptors.response.use(
 	(response) => response,
 	async (error) => {
