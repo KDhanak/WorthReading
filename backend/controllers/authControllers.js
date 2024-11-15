@@ -4,7 +4,7 @@ import UserSession from '../models/UserSession.js';
 
 const generateAccessToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: '15m',
+		expiresIn: '1h',
 	});
 };
 
@@ -153,7 +153,7 @@ export const refreshAccessToken = async (req, res) => {
 		const accessToken = jwt.sign(
 			{ id: decoded.id },
 			process.env.JWT_SECRET,
-			{ expiresIn: '15m' }
+			{ expiresIn: '1h' }
 		);
 
 		res.json({ token: accessToken });
