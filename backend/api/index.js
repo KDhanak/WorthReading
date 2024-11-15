@@ -2,9 +2,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import authRouter from './routes/authRoutes.js';
-import bookRouter from './routes/bookRoutes.js';
-import cartRouter from './routes/cartRoutes.js';
+import authRouter from '../routes/authRoutes.js';
+import bookRouter from '../routes/bookRoutes.js';
+import cartRouter from '../routes/cartRoutes.js';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
