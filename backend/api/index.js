@@ -25,9 +25,9 @@ app.get('/', (req, res) => {
 	res.send('Hello, JavaScript with Express using ES Modules!');
 });
 
-app.use('/api/auth', authRouter);
-app.use('/api/book', bookRouter);
-app.use('/api/cart', cartRouter);
+app.use('/api/auth/', authRouter);
+app.use('/api/book/', bookRouter);
+app.use('/api/cart/', cartRouter);
 
 // Connect to MongoDB and start server
 mongoose
