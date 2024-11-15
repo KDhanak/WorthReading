@@ -121,8 +121,7 @@ export const accessToken = async (req, res) => {
 	if (!token) return res.status(401).json({ message: 'No token provided' });
 
 	jwt.verify(token, process.env.JWT_SECRET, async (error, decoded) => {
-		if (error) return res.status(403).json({ message: 'Invalid token' });
-		console.log(token);
+		if (error) return res.status(403).json({ message: 'Invalid token', accessToken: token });
 
 		try {
 			const user = await User.findById(decoded.id).select('name email');
