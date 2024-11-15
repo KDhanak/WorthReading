@@ -29,6 +29,12 @@ export const registerUser = async (req, res) => {
 		const accessToken = generateAccessToken(newUser._id);
 		const refreshToken = generateRefreshToken(newUser._id);
 
+		await UserSession.create({
+			userId: newUser._id,
+			refreshToken,
+			expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+		});
+
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
 			domain: '.vercel.app',
@@ -44,7 +50,7 @@ export const registerUser = async (req, res) => {
 			sameSite: "None",
 			secure: true,
 			path: '/',
-			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
 		})
 		res.status(201).json({ message: 'User registered successfully', accessToken, user: { name: newUser.name } });
 	} catch (error) {
@@ -93,7 +99,7 @@ export const loginUser = async (req, res) => {
 			sameSite: "None",
 			secure: true,
 			path: '/',
-			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
 		})
 
 		res.status(200).json({ message: 'Login successful', accessToken, user: { name: user.name } });
