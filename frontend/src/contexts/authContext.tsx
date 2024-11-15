@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		try {
 			const response = await api.post('/api/auth/login', { email, password }, { withCredentials: true });
 			const token = response.data.accessToken;
-			Cookies.set('accessToken',token, {expires: 1/96, secure:true, sameSite: 'None', httpOnly: true, 'domain': '.vercel.app'});
+			Cookies.set('accessToken',token, {expires: 1/96, secure:true, sameSite: 'None', domain: '.vercel.app'});
 			setUser(response.data.user);
 			setError(null);
 			return true;
@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		try {
 			const response = await api.post('/api/auth/register', { name, email, password });
 			const token = response.data.accessToken;
-			Cookies.set('accessToken',token, {expires: 1/96, secure:true, sameSite: 'None', httpOnly:true, 'domain': '.vercel.app'});
+			Cookies.set('accessToken',token, {expires: 1/96, secure:true, sameSite: 'None', domain: '.vercel.app'});
 			setUser(response.data.user);
 			setError(null);
 			return true;
