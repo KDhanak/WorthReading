@@ -1,5 +1,12 @@
 import express from 'express';
 import { loginUser, registerUser, accessToken, logoutUser, refreshAccessToken } from '../controllers/authControllers.js';
+import { rateLimit } from 'express-rate-limit';
+
+const refreshTokenLimiter = rateLimit({
+    windowMs: 30 * 60 * 1000,
+    max:5,
+    message: 'Too meany refresh token requests, please try again later.'
+})
 
 const authRouter = express.Router();
 
@@ -13,7 +20,7 @@ authRouter.post('/login', loginUser);
 authRouter.get('/validate', accessToken);
 
 // token refresh route
-authRouter.post('/refresh-token', refreshAccessToken)
+authRouter.post('/refresh-token', refreshTokenLimiter, refreshAccessToken)
 
 // logout route
 authRouter.post('/logout', logoutUser);
