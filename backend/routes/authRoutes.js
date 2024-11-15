@@ -3,8 +3,8 @@ import { loginUser, registerUser, accessToken, logoutUser, refreshAccessToken } 
 import { rateLimit } from 'express-rate-limit';
 
 const refreshTokenLimiter = rateLimit({
-    windowMs: 5 * 60 * 1000,
-    max:5,
+    windowMs: 1 * 60 * 1000,
+    max:10,
     message: 'Too meany refresh token requests, please try again later.'
 })
 
