@@ -127,6 +127,8 @@ export const accessToken = async (req, res) => {
 	const decoded = jwt.decode(token);
 	console.log('Decoded token: ', decoded);
 	console.log('Token: ', token);
+	res.send('Decoded token: ', decoded);
+	res.send('Token: ', token)
 	if (!token) return res.status(401).json({ message: 'No token provided' });
 
 	jwt.verify(token, process.env.JWT_SECRET, async (error, decoded) => {
