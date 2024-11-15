@@ -124,10 +124,12 @@ export const logoutUser = (req, res) => {
 
 export const accessToken = async (req, res) => {
 	const token = req.cookies.accessToken;
+	const decoded = jwt.decode(token);
+	console.log('Decoded token: ', decoded);
 	if (!token) return res.status(401).json({ message: 'No token provided' });
 
 	jwt.verify(token, process.env.JWT_SECRET, async (error, decoded) => {
-		if (error) return res.status(403).json({ message: 'Invalid token', accessToken: token, decoded: decoded });
+		if (error) return res.status(403).json({ message: 'Invalid token', accessToken: token });
 
 		try {
 			const user = await User.findById(decoded.id).select('name email');
