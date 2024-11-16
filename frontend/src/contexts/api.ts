@@ -1,17 +1,33 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const baseURL = import.meta.env.VITE_DEPLOYMENT === 'true' ? import.meta.env.VITE_BACKEND_URL : 'http://localhost:5000'
+const navigate = useNavigate();
 
 const api = axios.create({
 	baseURL: baseURL,
 	withCredentials: true,
 });
 
-const accessToken = Cookies.get('accessToken');
-if(accessToken) {
-	api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-}
+api.interceptors.request.use((request) => {
+	console.log('Outgoing Request:',  request)
+	return request;
+})
+
+api.interceptors.response.use(
+	(response) => response,
+	async (error) => {
+		const originalRequest = error.config;
+
+		if (error.response?.status === 401 && !originalRequest._retry) {
+			originalRequest._retry = true;
+			console.error('Access token invalid or expired');
+			navigate('/login')
+		}
+
+		return Promise.reject(error);
+	}
+)
 
 // api.interceptors.response.use(
 // 	(response) => response,
