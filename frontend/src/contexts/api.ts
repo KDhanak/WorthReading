@@ -22,7 +22,6 @@ api.interceptors.response.use(
 		if (error.response?.status === 401 && !originalRequest._retry) {
 			originalRequest._retry = true;
 			console.error('Access token invalid or expired');
-			navigate('/login')
 		}
 
 		return Promise.reject(error);
