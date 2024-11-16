@@ -9,6 +9,7 @@ interface AuthContextProps {
 	logout: () => void;
 	isAuthenticated: boolean;
 	error: string | null;
+	loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState<boolean>(true);
 
 	const handleApiError = (error: unknown, defaultMessage: string) => {
 		if (axios.isAxiosError(error) && error.response) {
@@ -27,15 +29,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 	useEffect(() => {
 		const checkLoggedInUser = async () => {
-			try {
-				const response = await api.get('/api/auth/validate', { withCredentials: true });
-				setUser(response.data.user);
-			} catch (error: unknown) {
-				console.error('Failed to fetch user', error);
-			}
+		  try {
+			const response = await api.get('/api/auth/validate', { withCredentials: true });
+			setUser(response.data.user);
+		  } catch (error: unknown) {
+			console.error('Failed to fetch user', error);
+			setUser(null);  // Reset user if validation fails
+		  } finally {
+			setLoading(false); // Set loading to false after attempting to check user status
+		  }
 		};
 		checkLoggedInUser();
-	}, []);
+	  }, []);
 
 	const login = async (email: string, password: string): Promise<boolean> => {
 		try {
@@ -73,7 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 	const isAuthenticated = !!user;
 
 	return (
-		<AuthContext.Provider value={{ user, login, register, logout, isAuthenticated, error }}>
+		<AuthContext.Provider value={{ user, login, register, logout, isAuthenticated, error, loading }}>
 			{children}
 		</AuthContext.Provider>
 	);
