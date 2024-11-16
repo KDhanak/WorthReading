@@ -38,8 +38,7 @@ export const registerUser = async (req, res) => {
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
 			domain: '.vercel.app',
-			sameSite: "None",
-			secure: true,
+			sameSite: "Lax",
 			path: '/',
 			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
 		})
@@ -47,8 +46,7 @@ export const registerUser = async (req, res) => {
 		res.cookie('accessToken', accessToken, {
 			httpOnly: true,
 			domain: '.vercel.app',
-			sameSite: "None",
-			secure: true,
+			sameSite: "Lax",
 			path: '/',
 			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
 		})
@@ -87,8 +85,7 @@ export const loginUser = async (req, res) => {
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
 			domain: '.vercel.app',
-			sameSite: 'None',
-			secure: true,
+			sameSite: 'Lax',
 			path: '/',
 			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
 		});
@@ -96,8 +93,7 @@ export const loginUser = async (req, res) => {
 		res.cookie('accessToken', accessToken, {
 			httpOnly: true,
 			domain: '.vercel.app',
-			sameSite: "None",
-			secure: true,
+			sameSite: "Lax",
 			path: '/',
 			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
 		})
