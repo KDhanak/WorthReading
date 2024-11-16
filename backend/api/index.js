@@ -16,13 +16,13 @@ const F_URL = process.env.FRONTEND_URL;
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-	origin: F_URL,
-	credentials: true,
+  origin: F_URL,
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
 app.get('/', (req, res) => {
-	res.send('Hello, JavaScript with Express using ES Modules!');
+  res.status(200).send('Hello, JavaScript with Express using ES Modules!');
 });
 
 app.use('/api/auth', authRouter);

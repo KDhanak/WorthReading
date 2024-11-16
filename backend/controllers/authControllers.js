@@ -108,7 +108,12 @@ export const loginUser = async (req, res) => {
 	}
 };
 
-export const logoutUser = (req, res) => {
+export const logoutUser = async (req, res) => {
+	const { refreshToken } = req.cookies;
+
+	if (refreshToken) {
+		await UserSession.deleteOne({ refreshToken })
+	}
 	res.clearCookie('accessToken', {
 		httpOnly: true,
 		sameSite: 'None',
@@ -124,18 +129,13 @@ export const logoutUser = (req, res) => {
 
 export const accessToken = async (req, res) => {
 	const token = req.cookies.accessToken;
-	const decoded = jwt.decode(token);
-	console.log('Decoded token: ', decoded);
-	console.log('Token: ', token);
-	res.send('Decoded token: ', decoded);
-	res.send('Token: ', token)
 	if (!token) return res.status(401).json({ message: 'No token provided' });
 
 	jwt.verify(token, process.env.JWT_SECRET, async (error, decoded) => {
 		if (error) {
 			console.error('error: ', error.message);
 			return res.status(403).json({ message: 'Invalid token', accessToken: token });
-		} 
+		}
 
 		try {
 			const user = await User.findById(decoded.id).select('name email');
