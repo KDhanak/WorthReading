@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginUser, registerUser, accessToken, logoutUser } from '../controllers/authControllers.js';
+import { loginUser, registerUser, accessToken, logoutUser, refreshAccessToken } from '../controllers/authControllers.js';
 import rateLimit from 'express-rate-limit';
 
 const loginLimiter = rateLimit({
