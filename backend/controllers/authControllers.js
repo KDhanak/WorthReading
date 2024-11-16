@@ -40,6 +40,7 @@ export const registerUser = async (req, res) => {
 			domain: '.vercel.app',
 			sameSite: "Lax",
 			path: '/',
+			secure: true,
 			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
 		})
 
@@ -47,6 +48,7 @@ export const registerUser = async (req, res) => {
 			httpOnly: true,
 			domain: '.vercel.app',
 			sameSite: "Lax",
+			secure: true,
 			path: '/',
 			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
 		})
@@ -86,6 +88,7 @@ export const loginUser = async (req, res) => {
 			httpOnly: true,
 			domain: '.vercel.app',
 			sameSite: 'Lax',
+			secure: true,
 			path: '/',
 			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
 		});
@@ -94,6 +97,7 @@ export const loginUser = async (req, res) => {
 			httpOnly: true,
 			domain: '.vercel.app',
 			sameSite: "Lax",
+			secure: true,
 			path: '/',
 			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
 		})
