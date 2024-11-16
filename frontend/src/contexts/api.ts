@@ -1,8 +1,6 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const baseURL = import.meta.env.VITE_DEPLOYMENT === 'true' ? import.meta.env.VITE_BACKEND_URL : 'http://localhost:5000'
-const navigate = useNavigate();
 
 const api = axios.create({
 	baseURL: baseURL,
