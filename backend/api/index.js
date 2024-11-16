@@ -17,7 +17,7 @@ app.set('trust proxy', true);
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: 'https://worth-reading.vercel.app',
+  origin: 'https://worth-reading-frontend.vercel.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
