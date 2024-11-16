@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginUser, registerUser, accessToken, logoutUser, refreshAccessToken } from '../controllers/authControllers.js';
+import { loginUser, registerUser, accessToken, logoutUser } from '../controllers/authControllers.js';
 import rateLimit from 'express-rate-limit';
 
 const requestLimiter = rateLimit({
@@ -20,7 +20,7 @@ authRouter.post('/login', requestLimiter, loginUser);
 authRouter.get('/validate', accessToken);
 
 // token refresh route
-authRouter.post('/refresh-token', requestLimiter, refreshAccessToken)
+// authRouter.post('/refresh-token', requestLimiter, refreshAccessToken)
 
 // logout route
 authRouter.post('/logout', logoutUser);

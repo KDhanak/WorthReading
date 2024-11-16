@@ -151,27 +151,27 @@ export const accessToken = async (req, res) => {
 
 };
 
-export const refreshAccessToken = async (req, res) => {
-	const { refreshToken } = req.cookies;
+// export const refreshAccessToken = async (req, res) => {
+// 	const { refreshToken } = req.cookies;
 
-	if (!refreshToken) return res.status(401).json({ message: 'Not authorized, no token found' });
+// 	if (!refreshToken) return res.status(401).json({ message: 'Not authorized, no token found' });
 
-	try {
-		const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+// 	try {
+// 		const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-		const session = await UserSession.findOne({ refreshToken });
-		if (!session) {
-			return res.status(401).json({ message: 'Invalid session, please login' });
-		}
+// 		const session = await UserSession.findOne({ refreshToken });
+// 		if (!session) {
+// 			return res.status(401).json({ message: 'Invalid session, please login' });
+// 		}
 
-		const accessToken = jwt.sign(
-			{ id: decoded.id },
-			process.env.JWT_SECRET,
-			{ expiresIn: '1h' }
-		);
+// 		const accessToken = jwt.sign(
+// 			{ id: decoded.id },
+// 			process.env.JWT_SECRET,
+// 			{ expiresIn: '1h' }
+// 		);
 
-		res.json({ token: accessToken });
-	} catch (error) {
-		res.status(401).json({ message: "Not authorized, token failed." });
-	}
-};
+// 		res.json({ token: accessToken });
+// 	} catch (error) {
+// 		res.status(401).json({ message: "Not authorized, token failed." });
+// 	}
+// };
