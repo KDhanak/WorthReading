@@ -7,6 +7,11 @@ const api = axios.create({
 	withCredentials: true,
 });
 
+api.interceptors.request.use((request) => {
+	console.log('Outgoing Request:',  request)
+	return request;
+})
+
 api.interceptors.response.use(
 	(response) => response,
 	async (error) => {
