@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
 	const isProduction = env.VITE_DEPLOYMENT === 'true';
 
 	const baseURL = isProduction ? env.VITE_BACKEND_URL : 'http://localhost:5000';
+	console.log(baseURL);
 
 	return {
 		base: '/',
