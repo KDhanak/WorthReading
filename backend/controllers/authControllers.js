@@ -38,7 +38,7 @@ export const registerUser = async (req, res) => {
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
 			domain: 'worth-reading.vercel.app',
-			sameSite: "Strict",
+			sameSite: "None",
 			path: '/',
 			secure: true,
 			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -47,7 +47,7 @@ export const registerUser = async (req, res) => {
 		res.cookie('accessToken', accessToken, {
 			httpOnly: true,
 			domain: 'worth-reading.vercel.app',
-			sameSite: "Strict",
+			sameSite: "None",
 			secure: true,
 			path: '/',
 			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
@@ -87,7 +87,7 @@ export const loginUser = async (req, res) => {
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
 			domain: 'worth-reading.vercel.app',
-			sameSite: 'Strict',
+			sameSite: 'None',
 			secure: true,
 			path: '/',
 			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -96,7 +96,7 @@ export const loginUser = async (req, res) => {
 		res.cookie('accessToken', accessToken, {
 			httpOnly: true,
 			domain: 'worth-reading.vercel.app',
-			sameSite: "Strict",
+			sameSite: "None",
 			secure: true,
 			path: '/',
 			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
