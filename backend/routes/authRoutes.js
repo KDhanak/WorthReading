@@ -20,7 +20,7 @@ authRouter.post('/login', requestLimiter, loginUser);
 authRouter.get('/validate', accessToken);
 
 // token refresh route
-authRouter.post('/refresh-token', requestLimiter, refreshAccessToken)
+authRouter.post('/refresh-token', refreshAccessToken)
 
 // logout route
 authRouter.post('/logout', logoutUser);

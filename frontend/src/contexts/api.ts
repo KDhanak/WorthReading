@@ -15,14 +15,23 @@ api.interceptors.response.use(
 		if (error.response.status === 401 && !originalRequest._retry) {
 			originalRequest._retry = true;
 
-			try {
-				console.error('Access token invalid ot expired. Attempting re-authentication.');
-				await api.post('/api/auth/refresh-token');
-				return api(originalRequest);
-			} catch (refreshError) {
-				console.error('Token refresh failed, redirecting to login', refreshError);
+			if (!originalRequest._retryCount) {
+				originalRequest._retryCount = 1;
+			} else {
+				originalRequest._retryCount += 1;
 			}
 
+			if (originalRequest._retryCount <= 3) {
+				try {
+					console.error('Access token invalid ot expired. Attempting re-authentication.');
+					await api.post('/api/auth/refresh-token');
+					return api(originalRequest);
+				} catch (refreshError) {
+					console.error('Token refresh failed, redirecting to login', refreshError);
+				}
+			} else {
+				console.error('Token refresh attempts exceeded. Redirecting to login.');
+			}
 		}
 		return Promise.reject(error);
 	}
