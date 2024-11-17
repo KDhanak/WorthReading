@@ -23,7 +23,7 @@ api.interceptors.response.use(
 
 			if (originalRequest._retryCount <= 3) {
 				try {
-					console.error('Access token invalid ot expired. Attempting re-authentication.');
+					console.error('Access token invalid or expired. Attempting re-authentication.');
 					await api.post('/api/auth/refresh-token');
 					return api(originalRequest);
 				} catch (refreshError) {
