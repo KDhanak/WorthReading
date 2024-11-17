@@ -3,8 +3,8 @@ import { loginUser, registerUser, accessToken, logoutUser, refreshAccessToken } 
 import rateLimit from 'express-rate-limit';
 
 const requestLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 45, // Limit each IP to 10 login attempts per window
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    max: 2, // Limit each IP to 2 login attempts per window
     message: 'Too many login attempts. Please try again later.',
 });
 
