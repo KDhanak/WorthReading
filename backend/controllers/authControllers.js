@@ -37,7 +37,7 @@ export const registerUser = async (req, res) => {
 
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
-			domain: '.vercel.app',
+			domain: 'worth-reading.vercel.app',
 			sameSite: "Lax",
 			path: '/',
 			secure: true,
@@ -46,7 +46,7 @@ export const registerUser = async (req, res) => {
 
 		res.cookie('accessToken', accessToken, {
 			httpOnly: true,
-			domain: '.vercel.app',
+			domain: 'worth-reading.vercel.app',
 			sameSite: "Lax",
 			secure: true,
 			path: '/',
@@ -86,7 +86,7 @@ export const loginUser = async (req, res) => {
 
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
-			domain: '.vercel.app',
+			domain: 'worth-reading.vercel.app',
 			sameSite: 'Lax',
 			secure: true,
 			path: '/',
@@ -95,7 +95,7 @@ export const loginUser = async (req, res) => {
 
 		res.cookie('accessToken', accessToken, {
 			httpOnly: true,
-			domain: '.vercel.app',
+			domain: 'worth-reading.vercel.app',
 			sameSite: "Lax",
 			secure: true,
 			path: '/',
