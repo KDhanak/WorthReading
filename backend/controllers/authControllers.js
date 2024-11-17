@@ -116,12 +116,18 @@ export const logoutUser = async (req, res) => {
 	}
 	res.clearCookie('accessToken', {
 		httpOnly: true,
+		domain: 'worth-reading.vercel.app',
 		sameSite: 'None',
+		secure: true,
+		path: '/',
 	});
 
 	res.clearCookie('refreshToken', {
 		httpOnly: true,
+		domain: 'worth-reading.vercel.app',
 		sameSite: 'None',
+		secure: true,
+		path: '/',
 	});
 
 	res.status(200).json({ message: 'Logout successful' });
