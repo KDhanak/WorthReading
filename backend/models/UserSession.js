@@ -26,8 +26,12 @@ const useSessionSchema = new mongoose.Schema({
 
 useSessionSchema.pre('save', function (next) {
     this.updatedAt = Date.now();
+    if (!this.expiresAt) {
+        this.expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000;
+    }
     next();
 });
+
 
 const UserSession = mongoose.model('UserSession', useSessionSchema);
 

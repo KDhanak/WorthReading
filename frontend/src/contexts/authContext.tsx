@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import api from './api'
 
 interface AuthContextProps {
@@ -18,14 +17,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 	const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
+	const handleApiError = (error: unknown, defaultMessage: string) => {
+		if (axios.isAxiosError(error) && error.response) {
+			setError(error.response.data.message || defaultMessage);
+		} else {
+			setError(defaultMessage);
+		}
+	};
+
 	useEffect(() => {
 		const checkLoggedInUser = async () => {
 			try {
-				const token = Cookies.get('accessToken');
-				if (token) {
-					const response = await axios.get('/api/auth/validate', { withCredentials: true});
-					setUser(response.data.user);
-				}
+				const response = await api.get('/api/auth/validate', { withCredentials: true });
+				setUser(response.data.user);
 			} catch (error: unknown) {
 				console.error('Failed to fetch user', error);
 			}
@@ -36,17 +40,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 	const login = async (email: string, password: string): Promise<boolean> => {
 		try {
 			const response = await api.post('/api/auth/login', { email, password }, { withCredentials: true });
-			const token = response.data.accessToken;
-			Cookies.set('accessToken',token, {expires: 1/96, secure:true, sameSite: 'Strict'});
 			setUser(response.data.user);
 			setError(null);
 			return true;
 		} catch (error: unknown) {
-			if (axios.isAxiosError(error) && error.response) {
-				setError(error.response.data.message);
-			} else {
-				setError('An error occurred during login');
-			}
+			handleApiError(error, 'An error occurred during login');
 			return false;
 		}
 	};
@@ -55,16 +53,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		try {
 			const response = await api.post('/api/auth/register', { name, email, password });
 			const token = response.data.accessToken;
-			Cookies.set('accessToken',token, {expires: 1/96, secure:true, sameSite: 'Strict'});
 			setUser(response.data.user);
 			setError(null);
 			return true;
 		} catch (error: unknown) {
-			if (axios.isAxiosError(error) && error.response) {
-				setError(error.response.data.message || 'Registration Failed');
-			} else {
-				setError('An error occurred during login');
-			}
+			handleApiError(error, 'An error occurred during register');
 			return false;
 		}
 	};
@@ -73,8 +66,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		api.post('/api/auth/logout', {}, { withCredentials: true })
 			.then(() => {
 				setUser(null);
-				Cookies.remove('accessToken'); 
-				Cookies.remove('refreshToken');
 			})
 			.catch((error: unknown) => console.error('Logout error:', error));
 	};

@@ -4,7 +4,7 @@ import UserSession from '../models/UserSession.js';
 
 const generateAccessToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: '15m',
+		expiresIn: '1h',
 	});
 };
 
@@ -32,10 +32,20 @@ export const registerUser = async (req, res) => {
 
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
-			sameSite: "Strict",
-			path: 'api/auth',
+			sameSite: "None",
+			path: '/',
+			secure: true,
 			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-		})
+		});
+
+		res.cookie('accessToken', accessToken, {
+			httpOnly: true,
+			domain: 'worth-reading.vercel.app',
+			sameSite: "None",
+			secure: true,
+			path: '/',
+			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
+		});
 
 		res.status(201).json({ message: 'User registered successfully', accessToken, user: { name: newUser.name } });
 	} catch (error) {
@@ -71,9 +81,19 @@ export const loginUser = async (req, res) => {
 
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
-			sameSite: 'Strict',
-			path: 'api/auth',
+			sameSite: "None",
+			path: '/',
+			secure: true,
 			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+		});
+
+		res.cookie('accessToken', accessToken, {
+			httpOnly: true,
+			domain: 'worth-reading.vercel.app',
+			sameSite: "None",
+			secure: true,
+			path: '/',
+			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
 		});
 
 		res.status(200).json({ message: 'Login successful', accessToken, user: { name: user.name } });
@@ -85,12 +105,16 @@ export const loginUser = async (req, res) => {
 export const logoutUser = (req, res) => {
 	res.clearCookie('accessToken', {
 		httpOnly: true,
-		sameSite: 'strict',
+		sameSite: "None",
+		path: '/',
+		secure: true,
 	});
 
 	res.clearCookie('refreshToken', {
 		httpOnly: true,
-		sameSite: 'strict',
+		sameSite: "None",
+		path: '/',
+		secure: true,
 	});
 
 	res.status(200).json({ message: 'Logout successful' });
@@ -118,26 +142,26 @@ export const accessToken = async (req, res) => {
 };
 
 export const refreshAccessToken = async (req, res) => {
-    const { refreshToken } = req.cookies;
+	const { refreshToken } = req.cookies;
 
-    if (!refreshToken) return res.status(401).json({ message: 'Not authorized, no token found' });
+	if (!refreshToken) return res.status(401).json({ message: 'Not authorized, no token found' });
 
-    try {
-        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+	try {
+		const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-        const session = await UserSession.findOne({ refreshToken });
-        if (!session) {
-            return res.status(401).json({ message: 'Invalid session, please login' });
-        }
+		const session = await UserSession.findOne({ refreshToken });
+		if (!session) {
+			return res.status(401).json({ message: 'Invalid session, please login' });
+		}
 
-        const accessToken = jwt.sign(
-            { id: decoded.id }, 
-            process.env.JWT_SECRET, 
-            { expiresIn: '15m' } 
-        );
+		const accessToken = jwt.sign(
+			{ id: decoded.id },
+			process.env.JWT_SECRET,
+			{ expiresIn: '1h' }
+		);
 
-        res.json({ token: accessToken });
-    } catch (error) {
-        res.status(401).json({ message: "Not authorized, token failed." });
-    }
+		res.json({ token: accessToken });
+	} catch (error) {
+		res.status(401).json({ message: "Not authorized, token failed." });
+	}
 };

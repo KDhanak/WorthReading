@@ -1,7 +1,6 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
-const baseURL = import.meta.env.VITE_DEPLOYMENT === 'true' ? import.meta.env.VITE_BACKEND_URL : 'http://localhost:5000'
+export const baseURL = import.meta.env.VITE_DEPLOYMENT === 'true' ? import.meta.env.VITE_BACKEND_URL : 'http://localhost:5000'
 
 const api = axios.create({
 	baseURL: baseURL,
@@ -16,20 +15,23 @@ api.interceptors.response.use(
 		if (error.response.status === 401 && !originalRequest._retry) {
 			originalRequest._retry = true;
 
-			try {
-				const { data } = await api.post('/api/auth/refresh-token');
-				const newAccessToken = data.token;
-
-				Cookies.set('accessToken', newAccessToken);
-
-				api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-				originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-
-				return api(originalRequest);
-			} catch (refreshError) {
-				console.error('Token refresh failed', refreshError);
+			if (!originalRequest._retryCount) {
+				originalRequest._retryCount = 1;
+			} else {
+				originalRequest._retryCount += 1;
 			}
 
+			if (originalRequest._retryCount <= 3) {
+				try {
+					console.error('Access token invalid or expired. Attempting re-authentication.');
+					await api.post('/api/auth/refresh-token');
+					return api(originalRequest);
+				} catch (refreshError) {
+					console.error('Token refresh failed, redirecting to login', refreshError);
+				}
+			} else {
+				console.error('Token refresh attempts exceeded. Redirecting to login.');
+			}
 		}
 		return Promise.reject(error);
 	}
