@@ -1,7 +1,7 @@
 import './App.css';
-import Helmet from 'react-helmet';
 import Categories from './components/categories/categories';
 import Books from './components/books/books';
+import { Helmet } from 'react-helmet-async';
 
 function App() {
 	return (

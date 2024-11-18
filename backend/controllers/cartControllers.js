@@ -4,7 +4,7 @@ import Book from '../models/Book.js';
 export const getCart = async (req, res) => {
     try {
          const cart = await Cart.findOne({userId: req.user._id}).populate('items.productId');
-         if (!cart) return res.status(404).json({message: 'Cart not found'});
+         if (!cart) return res.status(404).json({message: 'Cart not found error'});
          res.json(cart);
     } catch (error) {
         res.status(500).json({message: error.message});

@@ -40,14 +40,13 @@ export const registerUser = async (req, res) => {
 
 		res.cookie('accessToken', accessToken, {
 			httpOnly: true,
-			domain: 'worth-reading.vercel.app',
 			sameSite: "None",
 			secure: true,
 			path: '/',
-			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
+			expires: new Date(Date.now() + 55 * 60 * 1000),
 		});
 
-		res.status(201).json({ message: 'User registered successfully', accessToken, user: { name: newUser.name } });
+		res.status(201).json({ message: 'User registered successfully', accessToken, refreshToken, user: { name: newUser.name } });
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
@@ -89,14 +88,13 @@ export const loginUser = async (req, res) => {
 
 		res.cookie('accessToken', accessToken, {
 			httpOnly: true,
-			domain: 'worth-reading.vercel.app',
 			sameSite: "None",
 			secure: true,
 			path: '/',
-			expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
+			expires: new Date(Date.now() + 55 * 60 * 1000),
 		});
 
-		res.status(200).json({ message: 'Login successful', accessToken, user: { name: user.name } });
+		res.status(200).json({ message: 'Login successful', accessToken, refreshToken, user: { name: user.name } });
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
@@ -159,8 +157,15 @@ export const refreshAccessToken = async (req, res) => {
 			process.env.JWT_SECRET,
 			{ expiresIn: '1h' }
 		);
+		res.cookie('accessToken', accessToken, {
+			httpOnly: true,
+			sameSite: "None",
+			secure: true,
+			path: '/',
+			expires: new Date(Date.now() + 55 * 60 * 1000),
+		});
 
-		res.json({ token: accessToken });
+		res.json({message: 'Access token refreshed successfully'});
 	} catch (error) {
 		res.status(401).json({ message: "Not authorized, token failed." });
 	}
