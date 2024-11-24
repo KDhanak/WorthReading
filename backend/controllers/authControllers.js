@@ -4,7 +4,7 @@ import UserSession from '../models/UserSession.js';
 
 const generateAccessToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: '1m',
+		expiresIn: '1h',
 	});
 };
 
@@ -140,7 +140,7 @@ export const accessToken = async (req, res) => {
 	jwt.verify(token, process.env.JWT_SECRET, async (error, decoded) => {
 		if (error) {
 			console.error('error: ', error.message);
-			return res.status(403).json({ message: 'Invalid token', accessToken: token });
+			return res.status(403).json({ message: 'Invalid token' });
 		}
 
 		try {
