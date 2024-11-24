@@ -75,7 +75,7 @@ const NavBar: React.FC = () => {
                         </a>
 
                         <ul className="hidden tablet:flex items-center justify-start gap-6 md:gap-8 py-3">
-                            <li><a href="#" className="text-sm font-medium text-primary_4">Home</a></li>
+                            <li><a href="/" className="text-sm font-medium text-primary_4">Home</a></li>
                             <li><a href="#" className="text-sm font-medium text-primary_4">Best Sellers</a></li>
                             <li><a href="#" className="text-sm font-medium text-primary_4">About Us</a></li>
                         </ul>
@@ -85,8 +85,8 @@ const NavBar: React.FC = () => {
                                 onClick={toggleMenu}
                                 className="text-sm font-medium p-2 focus:outline-none"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
                                 </svg>
                             </button>
 

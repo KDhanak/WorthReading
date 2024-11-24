@@ -29,12 +29,12 @@ const Books: React.FC = () => {
         <div className='mx-52'>
             <div className='flex w-full items-center justify-between mt-3'>
                 <p className="font-bold text-lg text-primary_4 mx-auto">{selectedCategory}</p>
-                <form className="relative w-full max-w-sm shadow-lg" onSubmit={handleSearchSubmit}>
+                <form className="relative w-full max-w-sm shadow-sm" onSubmit={handleSearchSubmit}>
                     <label htmlFor="default-search" className="mb-2 text-sm font-medium sr-only">Search</label>
                     <div className="relative">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <svg className="w-4 h-4 text-primary_1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                         </div>
                         <input type="search" onChange={handleInputChange} id="default-search" className="block w-full h-12 ps-10 text-sm text-primary_1 border rounded-lg bg-primary_4 focus:ring-primary_3 focus:border-primary_3 placeholder:text-primary_1" placeholder="Search for your favourite book" required />
@@ -44,7 +44,7 @@ const Books: React.FC = () => {
             </div>
             <div className='grid grid-cols-1 lMobile:grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 lLaptop:grid-cols-5 monitor:grid-cols-7 lLaptop:gap-0 4K:gap-x-0 gap-x-14'>
                 {filteredBook.map((book, index) => (
-                    <div key={index} className="relative flex-col my-4 justify-center mx-auto bg-white shadow-xl border border-slate-200 rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]" onClick={() => fetchSelectedBook(book._id)}>
+                    <div key={index} className="relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border border-slate-200 rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]" onClick={() => fetchSelectedBook(book._id)}>
                         <div className="relative w-44 h-auto overflow-hidden rounded-t-lg bg-clip-border">
                             <img
                                 src={`data:image/jpeg;base64,${book.coverImageUrl}`}
@@ -57,19 +57,17 @@ const Books: React.FC = () => {
                                 {book.title}
                             </p>
                             <svg
-                                strokeWidth={1.5}
                                 stroke="currentColor"
                                 fill="none"
-                                className="w-7 h-7 flex-shrink-0 cursor-pointer hover:fill-primary_2 hover:stroke-inherit"
+                                className="w-7 h-7 flex-shrink-0 cursor-pointer hover:fill-primary_2 hover:stroke-primary_2"
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
                             >
                                 <path
-                                    stroke="currentColor"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    strokeWidth="2"
+                                    strokeWidth="1"
                                     d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7H7.312"
                                 />
                             </svg>

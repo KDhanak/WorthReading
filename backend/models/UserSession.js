@@ -33,6 +33,7 @@ useSessionSchema.pre('save', function (next) {
     next();
 });
 
+
 const UserSession = mongoose.model('UserSession', useSessionSchema);
 
 export default UserSession;

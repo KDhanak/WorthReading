@@ -1,15 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import api from './api';
-
-interface AuthContextProps {
-	user: { id: string; name: string; email: string } | null;
-	login: (email: string, password: string) => Promise<boolean>;
-	register: (name: string, email: string, password: string) => Promise<boolean>;
-	logout: () => void;
-	isAuthenticated: boolean;
-	error: string | null;
-}
+import axios, { AxiosError } from 'axios';
+import api from './api'
+import { AuthContextProps } from '../types';
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
@@ -44,7 +36,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 			setError(null);
 			return true;
 		} catch (error: unknown) {
-			handleApiError(error, 'An error occurred during login');
+			if (error instanceof AxiosError) {
+				if (error.response?.status === 429) {
+					setError ('Too many login requests, please try again in 5 minutes.')
+				} else {
+					handleApiError(error, 'An error occurred during login');
+				}
+			}
 			return false;
 		}
 	};

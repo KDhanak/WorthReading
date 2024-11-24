@@ -47,7 +47,7 @@ const Categories: React.FC = () => {
 
                     {/* Collapsible Menu */}
                     {isCategoriesOpen && (
-                        <ul className="mt-2 space-y-2 bg-primary_4 rounded-lg shadow p-2 absolute opacity-90">
+                        <ul className="mt-2 space-y-2 bg-primary_4 rounded-lg shadow-sm p-2 absolute opacity-90">
                             <ul className='p-2 text-sm font-medium text-primary_1'>{categories.map((category, index) => (
                                 <li key={index} onClick={() => handleCategoryClick(category)} className={`py-1 border-b text-sm font-medium ${selectedCategory === category ? 'text-primary_2 hover:text-primary_3' : 'text-primary_1'} cursor-pointer ease-in-out duration-200`}>
                                     {category}
@@ -59,7 +59,7 @@ const Categories: React.FC = () => {
             </div>
             <div className="hidden lLaptop:flex justify-center gap-1">
                 {categories.map((category, index) => (
-                    <div key={index} onClick={() => handleCategoryClick(category)} className={`border ${selectedCategory === category ? 'bg-primary_4 border-primary_1' : 'border-primary_2 bg-primary_1'}  py-2 h-fit px-4 rounded-lg shadow cursor-pointer`}>
+                    <div key={index} onClick={() => handleCategoryClick(category)} className={`border ${selectedCategory === category ? 'bg-primary_4 border-primary_1' : 'border-primary_2 bg-primary_1'}  py-2 h-fit px-4 rounded-lg shadow-sm cursor-pointer`}>
                         <p className={`font-semibold text-sm text-nowrap ${selectedCategory === category ? 'text-primary_2' : 'text-primary_4'}`}>{category}</p>
                     </div>
                 ))}
