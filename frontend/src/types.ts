@@ -44,7 +44,7 @@ export interface AuthContextProps {
 }
 
 export interface CartItem {
-    product: Books;
+    productId: Books;
     quantity: number;
     price: number;
 }
