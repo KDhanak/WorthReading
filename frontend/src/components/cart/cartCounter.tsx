@@ -15,7 +15,7 @@ const CartCounter: React.FC<CartCounterProps> = ({ availableCopies, onQuantityCh
     const [quantity, setQuantity] = useState(1);
     const { cart, updateCart } = useCart();
 
-    const quantityFromDatabase = (cart.find(item => item.product?._id === cartProductId))?.quantity
+    const quantityFromDatabase = (cart.find(item => item.productId?._id === cartProductId))?.quantity
 
     useEffect(() => {
         if (quantityFromDatabase !== undefined) {
