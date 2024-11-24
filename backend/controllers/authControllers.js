@@ -118,7 +118,7 @@ export const logoutUser = (req, res) => {
 	res.status(200).json({ message: 'Logout successful' });
 };
 
-export const accessToken = async (req, res) => {
+export const validateToken = async (req, res) => {
 	const token = req.cookies.accessToken;
 	if (!token) return res.status(401).json({ message: 'No token provided' });
 

@@ -75,7 +75,7 @@ const NavBar: React.FC = () => {
                         </a>
 
                         <ul className="hidden tablet:flex items-center justify-start gap-6 md:gap-8 py-3">
-                            <li><a href="#" className="text-sm font-medium text-primary_4">Home</a></li>
+                            <li><a href="/" className="text-sm font-medium text-primary_4">Home</a></li>
                             <li><a href="#" className="text-sm font-medium text-primary_4">Best Sellers</a></li>
                             <li><a href="#" className="text-sm font-medium text-primary_4">About Us</a></li>
                         </ul>

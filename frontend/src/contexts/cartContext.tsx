@@ -1,34 +1,24 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import axios, { AxiosError } from 'axios';
 import api from './api';
-
-interface CartItem {
-    productId: string;
-    quantity: number;
-    price: number;
-}
-
-interface CartContextProps {
-    cart: CartItem[];
-    loading: boolean;
-    error: string | null;
-    addItemToCart: (productId: string, quantity?: number) => Promise<boolean>;
-    removeItemFromCart: (productId: string) => Promise<boolean>;
-    updateCart: (productId: string, quantity: number) => Promise<boolean>;
-    clearCart: () => Promise<boolean>;
-    fetchCart: () => Promise<boolean>;
-}
+import { CartItem, CartContextProps } from '../types';
 
 const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<{ code: number | null, message: string | null } | null>(null);
 
-    useEffect(() => {
-        fetchCart();
-    }, []);
+    const handleApiError = (error: unknown, defaultMessage: string) => {
+        if (axios.isAxiosError(error) && error.response) {
+            const code = error.response.status;
+            const message = error.response.data.message || defaultMessage;
+            setError({ code, message });
+        } else {
+            setError({ code: null, message: defaultMessage });
+        }
+    };
 
     const fetchCart = async () => {
         setLoading(true);
@@ -38,10 +28,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setCart(data.items);
             return true;
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.message) {
-                setError(error.response?.data.message || 'Failed to fetch cart');
-            } else {
-                setError('An error occurred while fetching cart');
+            if (error instanceof AxiosError) {
+                if (error.response?.status === 404) {
+                    setError({ code: 404, message: 'Cart not found' });
+                } else if (error.response?.status === 401) {
+                    setError({ code: 401, message: 'Unauthorized access' });
+                } else {
+                    handleApiError(error, 'An error occurred while fetching cart.');
+                }
             }
             return false;
         } finally {
@@ -56,11 +50,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setCart(data.items);
             return true;
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.message) {
-                setError(error.response?.data.message || 'Failed to add to cart');
-            } else {
-                setError('An error occurred while adding to cart');
-            }
+            handleApiError(error, 'An error occurred while adding to cart.')
             return false;
         } finally {
             setLoading(false);
@@ -70,15 +60,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const updateCart = async (productId: string, quantity: number) => {
         setLoading(true);
         try {
-            const { data } = await axios.post('/api/cart/update', { productId, quantity });
+            const { data } = await api.put('/api/cart/update', { productId, quantity });
             setCart(data.items);
             return true;
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.message) {
-                setError(error.response?.data.message || 'Failed to update the cart');
-            } else {
-                setError('An error occurred while updating cart');
-            }
+            console.log(error);
+            handleApiError(error, 'An error occurred while updating cart.')
             return false;
         } finally {
             setLoading(false);
@@ -88,15 +75,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const removeItemFromCart = async (productId: string) => {
         setLoading(true);
         try {
-            const { data } = await api.post('/api/cart/remove', { productId });
+            const { data } = await api.delete(`/api/cart/remove/${productId}`);
             setCart(data.items);
             return true;
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.message) {
-                setError(error.response?.data.message || 'Failed to update the cart');
-            } else {
-                setError('An error occurred while updating cart');
-            }
+            handleApiError(error, 'An error occurred while updating cart.')
             return false;
         } finally {
             setLoading(false);
@@ -106,27 +89,30 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const clearCart = async () => {
         setLoading(true);
         try {
-            await api.post('/api/cart/clear');
+            await api.delete('/api/cart/clear');
             setCart([]);
             return true;
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.message) {
-                setError(error.response?.data.message || 'Failed to clear the cart');
-            } else {
-                setError('An error occurred while clearing cart');
-            }
+            handleApiError(error, 'An error occurred while removing cart.')
+
             return false;
         } finally {
             setLoading(false);
         }
     };
 
+    useEffect(() => {
+        fetchCart();
+    }, []);
+
     return (
         <CartContext.Provider
             value={{
                 cart,
                 loading,
+                setLoading,
                 error,
+                setError,
                 fetchCart,
                 addItemToCart,
                 updateCart,

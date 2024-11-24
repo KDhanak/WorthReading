@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { CiSquarePlus } from "react-icons/ci";
 import { CiSquareMinus } from "react-icons/ci";
 import './custom.css'
+import Loading from "../loading/loading";
 
 interface CounterProps {
     availableCopies: number;
     onQuantityChange: (quantity: number) => void;
+    cartProductId: string;
 }
 
-const Counter: React.FC<CounterProps> = ({ availableCopies, onQuantityChange }) => {
+const Counter: React.FC<CounterProps> = ({ availableCopies, onQuantityChange, cartProductId }) => {
     const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
@@ -41,7 +43,7 @@ const Counter: React.FC<CounterProps> = ({ availableCopies, onQuantityChange }) 
                 type="number"
                 value={quantity}
                 onChange={handleInputChange}
-                className="w-16 text-center bg-primary_1"
+                className="w-12 text-center bg-inherit"
                 min="1"
             />
             <button onClick={incrementQuantity}><CiSquarePlus className='size-7 text-primary_3' /></button>
