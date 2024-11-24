@@ -7,7 +7,7 @@ import Loading from "../loading/loading";
 interface CounterProps {
     availableCopies: number;
     onQuantityChange: (quantity: number) => void;
-    cartProductId: string;
+    cartProductId?: string;
 }
 
 const Counter: React.FC<CounterProps> = ({ availableCopies, onQuantityChange, cartProductId }) => {

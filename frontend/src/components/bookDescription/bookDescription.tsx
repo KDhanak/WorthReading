@@ -29,7 +29,7 @@ const BookDescription: React.FC = () => {
         setMatchedBookQuantity((cart.find(item => item.product?._id === bookId))?.quantity);
         if (bookId) {
             if (matchedBookQuantity || matchedBookQuantity === 0) {
-                if (matchedBookQuantity < book?.availableCopies) {
+                if (book?.availableCopies!== undefined && matchedBookQuantity < book?.availableCopies) {
                     console.log(matchedBookQuantity);
                     const success = await addItemToCart(bookId, quantity);
                     if (success) {
@@ -83,7 +83,7 @@ const BookDescription: React.FC = () => {
                         </div>
                     </div>
                     <div className='flex mt-3 gap-x-6'>
-                        <Counter availableCopies={book?.availableCopies || 0} onQuantityChange={setQuantity} cartProductId={book?._id} isBookDescription={true} />
+                        <Counter availableCopies={book?.availableCopies || 0} onQuantityChange={setQuantity} cartProductId={book?._id} />
                         <button
                             type="submit"
                             className="w-1/4 h-10 text-primary_2 bg-primary_4 focus:ring-4 focus:outline-none focus:ring-primary_3 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
