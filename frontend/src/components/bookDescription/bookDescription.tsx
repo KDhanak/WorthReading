@@ -26,7 +26,7 @@ const BookDescription: React.FC = () => {
     }, [bookId, book, fetchBookById]);
 
     const handleAddToCart = async () => {
-        setMatchedBookQuantity((cart.find(item => item.productId?.id === bookId))?.quantity);
+        setMatchedBookQuantity((cart.find(item => item.product?._id === bookId))?.quantity);
         if (bookId) {
             if (matchedBookQuantity || matchedBookQuantity === 0) {
                 if (matchedBookQuantity < book?.availableCopies) {
