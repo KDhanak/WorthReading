@@ -4,9 +4,8 @@ import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
 
 const Books: React.FC = () => {
-    const { setBook, filteredBook, loading, books, error } = useBook();
+    const { setBook, filteredBook, loading, books, error, selectedCategory, filterBooksByTitle } = useBook();
     const navigate = useNavigate();
-    const { selectedCategory, filterBooksByTitle } = useBook();
     const [query, setQuery] = useState('');
 
     const fetchSelectedBook = (bookId: string) => {

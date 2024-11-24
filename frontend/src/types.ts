@@ -61,3 +61,22 @@ export interface CartContextProps {
     clearCart: () => Promise<boolean>;
     fetchCart: () => Promise<boolean>;
 }
+
+export interface WishlistItem {
+    itemId: string; 
+    title: string;
+    author: string;
+    price: number;
+    coverImageUrl?: string; 
+}
+
+export interface WishlistContextProps {
+    wishlist: WishlistItem[]; 
+    loading: boolean; 
+    error: { code: number | null; message: string | null } | null; 
+    setLoading: (loading: boolean) => void; 
+    setError: (error: { code: number | null; message: string | null } | null) => void; 
+    fetchWishlist: () => Promise<boolean>;
+    addItemToWishlist: (itemId: string) => Promise<boolean>;
+    removeItemFromWishlist: (itemId: string) => Promise<boolean>; 
+}
