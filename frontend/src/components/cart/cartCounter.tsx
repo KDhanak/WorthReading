@@ -1,24 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { CiSquarePlus } from "react-icons/ci";
 import { CiSquareMinus } from "react-icons/ci";
 import { useCart } from "../../contexts/cartContext";
 import '../bookDescription/custom.css';
-import Loading from "../loading/loading";
 
 interface CartCounterProps {
     availableCopies: number;
     onQuantityChange: (quantity: number) => void;
-    cartProductId?: string;
+    cartProductId: string;
 }
 
 const CartCounter: React.FC<CartCounterProps> = ({ availableCopies, onQuantityChange, cartProductId }) => {
     const [quantity, setQuantity] = useState(1);
     const { cart, updateCart } = useCart();
 
-    const quantityFromDatabase = (cart.find(item => item.productId?.id === cartProductId))?.quantity
+    const quantityFromDatabase = useMemo(() => {
+        const cartItem = cart.find(item => item.productId?._id === cartProductId);
+        return cartItem?.quantity;
+    }, [cart, cartProductId]);
 
     useEffect(() => {
-        if (quantityFromDatabase !== undefined) {
+        if (quantityFromDatabase) {
             setQuantity(quantityFromDatabase);
         }
     }, [quantityFromDatabase]);
@@ -53,7 +55,7 @@ const CartCounter: React.FC<CartCounterProps> = ({ availableCopies, onQuantityCh
 
     return (
         <div className='flex items-center mr-3'>
-            <button onClick={decrementQuantity}><CiSquareMinus className='size-7 text-primary_3' /></button>
+            <button disabled={quantity === 1} onClick={decrementQuantity}><CiSquareMinus className='size-7 text-primary_3' /></button>
             <input
                 type="number"
                 value={quantity}
@@ -61,6 +63,7 @@ const CartCounter: React.FC<CartCounterProps> = ({ availableCopies, onQuantityCh
                 className="w-12 text-center bg-inherit"
                 min="1"
                 max={availableCopies}
+                disabled
             />
             <button onClick={incrementQuantity} disabled={quantity >= availableCopies}><CiSquarePlus className='size-7 text-primary_3' /></button>
         </div>

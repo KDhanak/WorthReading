@@ -4,7 +4,7 @@ import { useCart } from '../../contexts/cartContext';
 import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
 import CartCounter from './cartCounter';
-import Empty from '../../empty/empty';
+import Empty from '../empty/empty';
 
 const Cart: React.FC = () => {
     const { cart, setError, removeItemFromCart, error, loading, setLoading } = useCart();
@@ -27,7 +27,7 @@ const Cart: React.FC = () => {
     const delivery = 5;
     
     if (loading) return <Loading />;
-    if (error?.code === 404) return <Empty message='Your cart is empty.' />
+    if (error?.code === 404 || !cart.length) return <Empty message='Your cart is empty.' />
 
     return (
         <section className="mx-52">
@@ -40,7 +40,7 @@ const Cart: React.FC = () => {
                                 <div key={index} className="rounded-lg border border-primary_2 bg-white shadow-sm">
                                     <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
                                         <a href="#" className="shrink-0 md:order-1">
-                                            <img className="hidden h-40 w-32 dark:block shadow-sm rounded-s-lg" src={`data:image/jpeg;base64,${cartItems.productId.coverImageUrl}`} alt="imac image" />
+                                            <img className="hidden h-40 w-32 dark:block shadow-sm rounded-s-lg" src={cartItems.productId.coverImageUrl} alt="imac image" />
                                         </a>
 
                                         <label htmlFor="counter-input" className="sr-only">Choose quantity:</label>
@@ -61,11 +61,11 @@ const Cart: React.FC = () => {
                                                     <p className='text-accent-primary_4_light font-medium text-sm group-hover:text-pink-700 cursor-pointer'>Add to Whishlist</p>
                                                 </button>
 
-                                                <button type="button" onClick={() => handleRemoveItem(cartItems.productId._id)} className="inline-flex items-center text-sm font-medium text-red-600 group group-hover:text-red-900">
+                                                <button type="button" disabled={loading} onClick={() => handleRemoveItem(cartItems.productId._id)} className="inline-flex items-center text-sm font-medium text-red-600 group group-hover:text-red-900">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 group-hover:fill-red-900 group-hover:stroke-white">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                                     </svg>
-                                                    <p className='text-red-600 font-medium text-sm group-hover:text-pink-700 cursor-pointer'>Remove</p>
+                                                    <p className='text-red-600 font-medium text-sm group-hover:text-pink-700 cursor-pointer'>{loading ? 'Removing' : 'Remove'}</p>
                                                 </button>
                                             </div>
                                         </div>

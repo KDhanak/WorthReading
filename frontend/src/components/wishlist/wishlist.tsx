@@ -1,6 +1,7 @@
 import React from "react"
 import Loading from "../loading/loading";
 import { useState } from "react";
+import { useBook } from "../../contexts/bookContext";
 
 const Wishlist: React.FC = () => {
     const { setBook, filteredBook, loading, books, error,selectedCategory, filterBooksByTitle } = useBook();
@@ -10,7 +11,7 @@ const Wishlist: React.FC = () => {
 
     return (
         <div className='mx-52'>
-            <div className='flex w-full items-center justify-between mt-3'>
+            {/* <div className='flex w-full items-center justify-between mt-3'>
                 <p className="font-bold text-lg text-primary_4 mx-auto">{selectedCategory}</p>
                 <form className="relative w-full max-w-sm shadow-sm" onSubmit={handleSearchSubmit}>
                     <label htmlFor="default-search" className="mb-2 text-sm font-medium sr-only">Search</label>
@@ -65,10 +66,9 @@ const Wishlist: React.FC = () => {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div> */}
         </div>
     )
 }
 
 export default Wishlist;
-
