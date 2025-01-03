@@ -19,7 +19,7 @@ const BookDescription: React.FC = () => {
     const [showToast, setShowToast] = useState<boolean>(false);
     const { cart } = useCart();
     const [matchedBookQuantity, setMatchedBookQuantity] = useState<number | undefined>(0);
-    const { wishlist, addItemToWishlist } = useWishlist();
+    const { addItemToWishlist } = useWishlist();
 
     useEffect(() => {
         if (bookId && !book && !loading) {
@@ -32,7 +32,6 @@ const BookDescription: React.FC = () => {
         if (bookId) {
             if (matchedBookQuantity || matchedBookQuantity === 0) {
                 if (book?.availableCopies !== undefined && matchedBookQuantity < book?.availableCopies) {
-                    console.log(matchedBookQuantity);
                     const success = await addItemToCart(bookId, quantity);
                     if (success) {
                         setToastMessage({ success: success, message: 'Items added to your cart' });
