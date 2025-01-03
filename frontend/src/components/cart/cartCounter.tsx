@@ -12,7 +12,7 @@ interface CartCounterProps {
 
 const CartCounter: React.FC<CartCounterProps> = ({ availableCopies, onQuantityChange, cartProductId }) => {
     const [quantity, setQuantity] = useState(1);
-    const { cart, updateCart } = useCart();
+    const { cart, updateCart, fetchCart } = useCart();
 
     const quantityFromDatabase = (cart.find(item => item.productId?._id === cartProductId))?.quantity
 
@@ -31,6 +31,7 @@ const CartCounter: React.FC<CartCounterProps> = ({ availableCopies, onQuantityCh
             const newQuantity = quantity + 1;
             setQuantity(newQuantity);
             updateCart(cartProductId, newQuantity);
+            fetchCart();
         }
     };
 
@@ -39,6 +40,7 @@ const CartCounter: React.FC<CartCounterProps> = ({ availableCopies, onQuantityCh
             const newQuantity = quantity - 1;
             setQuantity(newQuantity);
             updateCart(cartProductId, newQuantity);
+            fetchCart();
         }
     }
 
@@ -47,6 +49,7 @@ const CartCounter: React.FC<CartCounterProps> = ({ availableCopies, onQuantityCh
         if (!isNaN(value) && value >= 1 && value <= availableCopies) {
             setQuantity(value);
             updateCart(cartProductId, value);
+            fetchCart();
         }
     };
 
