@@ -4,7 +4,7 @@ import { useCart } from '../../contexts/cartContext';
 import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
 import CartCounter from './cartCounter';
-import Empty from '../../empty/empty';
+import Empty from '../empty/empty';
 
 const Cart: React.FC = () => {
     const { cart, setError, removeItemFromCart, error, loading, setLoading } = useCart();

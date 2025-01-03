@@ -6,8 +6,8 @@ interface EmptyProps {
 
 const Empty: React.FC<EmptyProps> = ({message}) => {
     return (
-        <div>
-            <p>{message}</p>
+        <div className='relative w-screen h-screen'>
+            <p className='items-center justify-center'>{message}</p>
         </div>
     );
 };
