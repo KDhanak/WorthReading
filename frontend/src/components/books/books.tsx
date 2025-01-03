@@ -4,9 +4,8 @@ import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
 
 const Books: React.FC = () => {
-    const { setBook, filteredBook, loading, books, error } = useBook();
+    const { setBook, filteredBook, loading, books, error, selectedCategory, filterBooksByTitle } = useBook();
     const navigate = useNavigate();
-    const { selectedCategory, filterBooksByTitle } = useBook();
     const [query, setQuery] = useState('');
 
     const fetchSelectedBook = (bookId: string) => {
@@ -47,7 +46,7 @@ const Books: React.FC = () => {
                     <div key={index} className="relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border border-slate-200 rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]" onClick={() => fetchSelectedBook(book._id)}>
                         <div className="relative w-44 h-auto overflow-hidden rounded-t-lg bg-clip-border">
                             <img
-                                src={`data:image/jpeg;base64,${book.coverImageUrl}`}
+                                src={book.coverImageUrl}
                                 alt="card-image"
                                 className="h-56 w-44 object-cover rounded-t-lg cursor-pointer"
                             />
