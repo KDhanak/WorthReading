@@ -7,7 +7,7 @@ import CartCounter from './cartCounter';
 import Empty from '../../empty/empty';
 
 const Cart: React.FC = () => {
-    const { cart, setError, removeItemFromCart, error, loading, setLoading, fetchCart, updateCart } = useCart();
+    const { cart, setError, removeItemFromCart, error, loading, setLoading } = useCart();
     const navigate = useNavigate();
 
     const handleRemoveItem = async (productId: string) => {
@@ -22,10 +22,6 @@ const Cart: React.FC = () => {
             setError(null);
         }
     }, [setError, error, navigate]);
-
-    useEffect(() => {
-        fetchCart();
-    }, [updateCart])
 
     const total = parseFloat((cart.reduce((total, cartItems) => total + cartItems.quantity * cartItems.price, 0)).toFixed(2));
     const delivery = 5;

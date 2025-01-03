@@ -12,7 +12,7 @@ interface CartCounterProps {
 
 const CartCounter: React.FC<CartCounterProps> = ({ availableCopies, onQuantityChange, cartProductId }) => {
     const [quantity, setQuantity] = useState(1);
-    const { cart, updateCart, fetchCart } = useCart();
+    const { cart, updateCart } = useCart();
 
     const quantityFromDatabase = useMemo(() => {
         const cartItem = cart.find(item => item.productId?._id === cartProductId);

@@ -58,13 +58,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const updateCart = async (productId: string, quantity: number) => {
+        const previousCart = [...cart];
+        setCart(cart.map(item => (item.productId._id === productId ? { ...item, quantity } : item)));
         setLoading(true);
         try {
             const { data } = await api.put('/api/cart/update', { productId, quantity });
             setCart(data.items);
+            await fetchCart();
             return true;
         } catch (error: unknown) {
-            console.log(error);
+            setCart(previousCart);
             handleApiError(error, 'An error occurred while updating cart.')
             return false;
         } finally {
