@@ -5,6 +5,7 @@ import Register from '../components/register/register';
 import Layout from '../components/layout/layout';
 import BookDescription from '../components/bookDescription/bookDescription';
 import Cart from '../components/cart/cart';
+import Wishlist from '../components/wishlist/wishlist';
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
             {
                 path: '/cart',
                 element: <Cart />
+            },
+            {
+                path: '/wishlist',
+                element: <Wishlist />
             }
         ]
     }
