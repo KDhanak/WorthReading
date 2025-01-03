@@ -40,7 +40,7 @@ const Cart: React.FC = () => {
                                 <div key={index} className="rounded-lg border border-primary_2 bg-white shadow-sm">
                                     <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
                                         <a href="#" className="shrink-0 md:order-1">
-                                            <img className="hidden h-40 w-32 dark:block shadow-sm rounded-s-lg" src={`data:image/jpeg;base64,${cartItems.productId.coverImageUrl}`} alt="imac image" />
+                                            <img className="hidden h-40 w-32 dark:block shadow-sm rounded-s-lg" src={cartItems.productId.coverImageUrl} alt="imac image" />
                                         </a>
 
                                         <label htmlFor="counter-input" className="sr-only">Choose quantity:</label>
