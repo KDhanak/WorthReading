@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useBook } from '../../contexts/bookContext';
 import { useCart } from '../../contexts/cartContext';
+import { useAuth } from '../../contexts/authContext';
 import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../bookDescription/toast';
@@ -8,6 +9,7 @@ import Toast from '../bookDescription/toast';
 const Books: React.FC = () => {
     const { setBook, filteredBook, loading, books, error, selectedCategory, filterBooksByTitle } = useBook();
     const { addItemToCart } = useCart();
+    const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
     const [toastMessage, setToastMessage] = useState<{ success: boolean; message: string } | null>(null);
@@ -30,12 +32,16 @@ const Books: React.FC = () => {
     }
 
     const handleAddToCart = async (bookId: string, availableCopies: number) => {
-        if (bookId && availableCopies > 0) {
-            const success = await addItemToCart(bookId, 1);
-            if (success) {
-                setToastMessage({ success: success, message: 'Items added to your cart' });
-            } else {
-                setToastMessage({ success: success, message: 'There was an error adding this item to your cart' })
+        if (isAuthenticated === false) {
+            setToastMessage({ success: false, message: 'Please login to add items to your cart' });
+        } else {
+            if (bookId && availableCopies > 0) {
+                const success = await addItemToCart(bookId, 1);
+                if (success) {
+                    setToastMessage({ success: success, message: 'Items added to your cart' });
+                } else {
+                    setToastMessage({ success: success, message: 'There was an error adding this item to your cart' })
+                }
             }
         }
         setShowToast(true);
