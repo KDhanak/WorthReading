@@ -76,12 +76,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const removeItemFromCart = async (productId: string) => {
+        const previousCart = [...cart];
         setLoading(true);
         try {
             const { data } = await api.delete(`/api/cart/remove/${productId}`);
             setCart(data.items);
+            await fetchCart();
             return true;
         } catch (error: unknown) {
+            setCart(previousCart);
             handleApiError(error, 'An error occurred while updating cart.')
             return false;
         } finally {
