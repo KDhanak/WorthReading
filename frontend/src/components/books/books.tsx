@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import Toast from '../bookDescription/toast';
 
 const Books: React.FC = () => {
-    const { setBook, filteredBook, loading, books, error, selectedCategory, filterBooksByTitle } = useBook();
-    const { addItemToCart } = useCart();
+    const { setBook, filteredBook, loading, selectedCategory, filterBooksByTitle } = useBook();
+    const { cart, addItemToCart } = useCart();
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
@@ -51,6 +51,10 @@ const Books: React.FC = () => {
         }, 3000);
     }
 
+    const isBookInCart = (bookId: string) => {
+        return cart.some((item) => item.productId._id === bookId);
+    };
+
     return (
         <div className='mx-52'>
             <div className='flex w-full items-center justify-between mt-3'>
@@ -84,8 +88,7 @@ const Books: React.FC = () => {
                             </p>
                             <svg
                                 stroke="currentColor"
-                                fill="none"
-                                className="w-7 h-7 flex-shrink-0 cursor-pointer hover:fill-primary_2 hover:stroke-primary_2"
+                                className={`w-7 h-7 flex-shrink-0 cursor-pointer hover:fill-primary_2 hover:stroke-primary_2 ${isAuthenticated && isBookInCart(book._id) ? 'fill-primary_2 stroke-primary_2' : 'fill-none'}`}
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
