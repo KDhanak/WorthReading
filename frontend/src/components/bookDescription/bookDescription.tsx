@@ -68,7 +68,7 @@ const BookDescription: React.FC = () => {
         <div className='relative mx-52 monitor:mx-96 mt-20'>
             <div className='flex gap-x-20'>
                 <div className='w-80 h-full flex-shrink-0'>
-                    <img src={`data:image/jpeg;base64,${book?.coverImageUrl}`} className='w-80 h-auto flex-shrink-0 shadow-md rounded-lg' />
+                    <img src={book?.coverImageUrl} className='w-80 h-auto flex-shrink-0 shadow-md rounded-lg' />
                 </div>
                 <div>
                     <p className='text-xl font-bold text-primary_4'>{book?.title}</p>
