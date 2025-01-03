@@ -3,12 +3,11 @@ import { CiSquarePlus } from "react-icons/ci";
 import { CiSquareMinus } from "react-icons/ci";
 import { useCart } from "../../contexts/cartContext";
 import '../bookDescription/custom.css';
-import Loading from "../loading/loading";
 
 interface CartCounterProps {
     availableCopies: number;
     onQuantityChange: (quantity: number) => void;
-    cartProductId?: string;
+    cartProductId: string;
 }
 
 const CartCounter: React.FC<CartCounterProps> = ({ availableCopies, onQuantityChange, cartProductId }) => {
