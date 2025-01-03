@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBook } from '../../contexts/bookContext';
+import { useCart } from '../../contexts/cartContext';
 import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
+import Toast from '../bookDescription/toast';
 
 const Books: React.FC = () => {
     const { setBook, filteredBook, loading, books, error, selectedCategory, filterBooksByTitle } = useBook();
+    const { addItemToCart } = useCart();
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
+    const [toastMessage, setToastMessage] = useState<{ success: boolean; message: string } | null>(null);
+    const [showToast, setShowToast] = useState<boolean>(false);
 
     const fetchSelectedBook = (bookId: string) => {
         setBook(null);
@@ -22,6 +27,22 @@ const Books: React.FC = () => {
     const handleSearchSubmit = (event: React.FormEvent) => {
         event.preventDefault();
         filterBooksByTitle(query);
+    }
+
+    const handleAddToCart = async (bookId: string, availableCopies: number) => {
+        if (bookId && availableCopies > 0) {
+            const success = await addItemToCart(bookId, 1);
+            if (success) {
+                setToastMessage({ success: success, message: 'Items added to your cart' });
+            } else {
+                setToastMessage({ success: success, message: 'There was an error adding this item to your cart' })
+            }
+        }
+        setShowToast(true);
+
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
     }
 
     return (
@@ -43,8 +64,8 @@ const Books: React.FC = () => {
             </div>
             <div className='grid grid-cols-1 lMobile:grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 lLaptop:grid-cols-5 monitor:grid-cols-7 lLaptop:gap-0 4K:gap-x-0 gap-x-14'>
                 {filteredBook.map((book, index) => (
-                    <div key={index} className="relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border border-slate-200 rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]" onClick={() => fetchSelectedBook(book._id)}>
-                        <div className="relative w-44 h-auto overflow-hidden rounded-t-lg bg-clip-border">
+                    <div key={index} className="relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border border-slate-200 rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]">
+                        <div className="relative w-44 h-auto overflow-hidden rounded-t-lg bg-clip-border" onClick={() => fetchSelectedBook(book._id)}>
                             <img
                                 src={book.coverImageUrl}
                                 alt="card-image"
@@ -62,6 +83,7 @@ const Books: React.FC = () => {
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
+                                onClick={() => handleAddToCart(book._id, book.availableCopies)}
                             >
                                 <path
                                     strokeLinecap="round"
@@ -82,6 +104,11 @@ const Books: React.FC = () => {
                     </div>
                 ))}
             </div>
+            {showToast && (
+                <div className={`fixed bottom-16 left-1/2 transform -translate-x-1/2 transition-opacity duration-500 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                    <Toast message={toastMessage} />
+                </div>
+            )}
         </div>
     );
 };
