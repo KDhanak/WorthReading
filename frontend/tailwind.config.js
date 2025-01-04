@@ -13,6 +13,15 @@ export default {
 					'primary_4_light': '#646464',
 				}
 			},
+			keyframes: {
+				progress: {
+					from: {width: "0%"},
+					to: {width: "100%"},
+				},
+			},
+			animation: {
+				progress: "progress 3s linear forwards",
+			},
 			screens: {
 				'sMobile': '320px',
 				'mMobile': '375px',
