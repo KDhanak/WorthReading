@@ -74,12 +74,12 @@ const Books: React.FC = () => {
             </div>
             <div className='grid grid-cols-1 lMobile:grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 lLaptop:grid-cols-5 monitor:grid-cols-7 lLaptop:gap-0 4K:gap-x-0 gap-x-14'>
                 {filteredBook.map((book, index) => (
-                    <div key={index} className="relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border border-slate-200 rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]">
-                        <div className="relative w-44 h-auto overflow-hidden rounded-t-lg bg-clip-border" onClick={() => fetchSelectedBook(book._id)}>
+                    <div key={index} className={`relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border ${isAuthenticated && isBookInCart(book._id) ? 'border-primary_2': 'border-slate-200' } rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]`}>
+                        <div className="relative w-[175px] h-auto overflow-hidden rounded-t-lg bg-clip-border" onClick={() => fetchSelectedBook(book._id)}>
                             <img
                                 src={book.coverImageUrl}
                                 alt="card-image"
-                                className="h-56 w-44 object-cover rounded-t-lg cursor-pointer"
+                                className="h-56 w-[174px] object-cover mx-auto rounded-t-lg cursor-pointer"
                             />
                         </div>
                         <div className="flex justify-between mx-3 mt-2">
