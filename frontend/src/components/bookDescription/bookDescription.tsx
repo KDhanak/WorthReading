@@ -116,7 +116,7 @@ const BookDescription: React.FC = () => {
                 </div>
             </div>
             {showToast && (
-                <div className={`fixed bottom-16 left-1/2 transform -translate-x-1/2 transition-opacity duration-500 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                <div className={`fixed top-24 right-0 transform -translate-x-1/2 transition-opacity duration-500 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                     <Toast message={toastMessage} />
                 </div>
             )}

@@ -30,7 +30,7 @@ const Cart: React.FC = () => {
     if (error?.code === 404 || !cart.length) return <Empty message='Your cart is empty.' />
 
     return (
-        <section className="mx-52">
+        <section className="mx-52 my-10">
             <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
                 <h2 className=" text-2xl mx-auto text-center font-semibold text-primary_4">Shopping Cart</h2>
                 <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
