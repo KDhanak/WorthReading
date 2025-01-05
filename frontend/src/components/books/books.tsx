@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useBook } from '../../contexts/bookContext';
 import { useCart } from '../../contexts/cartContext';
+import { useAuth } from '../../contexts/authContext';
 import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../bookDescription/toast';
 
 const Books: React.FC = () => {
-    const { setBook, filteredBook, loading, books, error, selectedCategory, filterBooksByTitle } = useBook();
-    const { addItemToCart } = useCart();
+    const { setBook, filteredBook, loading, selectedCategory, filterBooksByTitle } = useBook();
+    const { cart, addItemToCart } = useCart();
+    const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
     const [toastMessage, setToastMessage] = useState<{ success: boolean; message: string } | null>(null);
@@ -30,12 +32,16 @@ const Books: React.FC = () => {
     }
 
     const handleAddToCart = async (bookId: string, availableCopies: number) => {
-        if (bookId && availableCopies > 0) {
-            const success = await addItemToCart(bookId, 1);
-            if (success) {
-                setToastMessage({ success: success, message: 'Items added to your cart' });
-            } else {
-                setToastMessage({ success: success, message: 'There was an error adding this item to your cart' })
+        if (isAuthenticated === false) {
+            setToastMessage({ success: false, message: 'Please login to add items to your cart' });
+        } else {
+            if (bookId && availableCopies > 0) {
+                const success = await addItemToCart(bookId, 1);
+                if (success) {
+                    setToastMessage({ success: success, message: 'Items added to your cart' });
+                } else {
+                    setToastMessage({ success: success, message: 'There was an error adding this item to your cart' })
+                }
             }
         }
         setShowToast(true);
@@ -44,6 +50,10 @@ const Books: React.FC = () => {
             setShowToast(false);
         }, 3000);
     }
+
+    const isBookInCart = (bookId: string) => {
+        return cart.some((item) => item.productId._id === bookId);
+    };
 
     return (
         <div className='mx-52'>
@@ -64,12 +74,12 @@ const Books: React.FC = () => {
             </div>
             <div className='grid grid-cols-1 lMobile:grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 lLaptop:grid-cols-5 monitor:grid-cols-7 lLaptop:gap-0 4K:gap-x-0 gap-x-14'>
                 {filteredBook.map((book, index) => (
-                    <div key={index} className="relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border border-slate-200 rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]">
-                        <div className="relative w-44 h-auto overflow-hidden rounded-t-lg bg-clip-border" onClick={() => fetchSelectedBook(book._id)}>
+                    <div key={index} className={`relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border ${isAuthenticated && isBookInCart(book._id) ? 'border-primary_2': 'border-slate-200' } rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]`}>
+                        <div className="relative w-[175px] h-auto overflow-hidden rounded-t-lg bg-clip-border" onClick={() => fetchSelectedBook(book._id)}>
                             <img
                                 src={book.coverImageUrl}
                                 alt="card-image"
-                                className="h-56 w-44 object-cover rounded-t-lg cursor-pointer"
+                                className="h-56 w-[174px] object-cover mx-auto rounded-t-lg cursor-pointer"
                             />
                         </div>
                         <div className="flex justify-between mx-3 mt-2">
@@ -78,8 +88,7 @@ const Books: React.FC = () => {
                             </p>
                             <svg
                                 stroke="currentColor"
-                                fill="none"
-                                className="w-7 h-7 flex-shrink-0 cursor-pointer hover:fill-primary_2 hover:stroke-primary_2"
+                                className={`w-7 h-7 flex-shrink-0 cursor-pointer hover:fill-primary_2 hover:stroke-primary_2 ${isAuthenticated && isBookInCart(book._id) ? 'fill-primary_2 stroke-primary_2' : 'fill-none'}`}
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
@@ -105,7 +114,7 @@ const Books: React.FC = () => {
                 ))}
             </div>
             {showToast && (
-                <div className={`fixed bottom-16 left-1/2 transform -translate-x-1/2 transition-opacity duration-500 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                <div className={`fixed top-24 -right-24 transform -translate-x-1/2 transition-opacity duration-500 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                     <Toast message={toastMessage} />
                 </div>
             )}

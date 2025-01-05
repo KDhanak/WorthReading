@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useBook } from '../../contexts/bookContext';
 import { useCart } from '../../contexts/cartContext';
+import { useAuth } from '../../contexts/authContext';
 import StarRating from './starRating';
 import Loading from '../loading/loading';
 import { useParams } from 'react-router-dom';
@@ -11,9 +12,10 @@ import Toast from './toast';
 import { useWishlist } from '../../contexts/wishlistContext';
 
 const BookDescription: React.FC = () => {
-    const { fetchBookById, book, error, loading } = useBook();
-    const { bookId } = useParams<{ bookId: string }>();
+    const { fetchBookById, book, loading } = useBook();
     const { addItemToCart } = useCart();
+    const { isAuthenticated } = useAuth();
+    const { bookId } = useParams<{ bookId: string }>();
     const [toastMessage, setToastMessage] = useState<{ success: boolean; message: string } | null>(null);
     const [quantity, setQuantity] = useState(1);
     const [showToast, setShowToast] = useState<boolean>(false);
@@ -28,23 +30,28 @@ const BookDescription: React.FC = () => {
     }, [bookId, book, fetchBookById]);
 
     const handleAddToCart = async () => {
-        setMatchedBookQuantity((cart.find(item => item.productId?._id === bookId))?.quantity);
-        if (bookId) {
-            if (matchedBookQuantity || matchedBookQuantity === 0) {
-                if (book?.availableCopies !== undefined && matchedBookQuantity < book?.availableCopies) {
-                    const success = await addItemToCart(bookId, quantity);
-                    if (success) {
-                        setToastMessage({ success: success, message: 'Items added to your cart' });
+        if (isAuthenticated === false) {
+            setToastMessage({ success: false, message: 'Please login to add items to your cart' });
+        } else {
+            setMatchedBookQuantity((cart.find(item => item.productId?._id === bookId))?.quantity);
+            if (bookId) {
+                if (matchedBookQuantity || matchedBookQuantity === 0) {
+                    if (book?.availableCopies !== undefined && matchedBookQuantity < book?.availableCopies) {
+                        const success = await addItemToCart(bookId, quantity);
+                        if (success) {
+                            setToastMessage({ success: success, message: 'Items added to your cart' });
+                        } else {
+                            setToastMessage({ success: success, message: 'There was an error adding this item to your cart' })
+                        }
                     } else {
-                        setToastMessage({ success: success, message: 'There was an error adding this item to your cart' })
+                        setToastMessage({ success: false, message: 'Not enough books available.' });
                     }
                 } else {
-                    setToastMessage({ success: false, message: 'Not enough books available.' });
+                    setToastMessage({ success: false, message: 'There was an error adding this item to your cart, there was no matchedQuantity.' })
                 }
-            } else {
-                setToastMessage({ success: false, message: 'There was an error adding this item to your cart, there was no matchedQuantity.' })
             }
         }
+
         setShowToast(true);
         setMatchedBookQuantity(0);
     };
@@ -98,7 +105,7 @@ const BookDescription: React.FC = () => {
                         </button>
                     </div>
                     <p className='text-accent-primary_4_light font-bold text-sm mt-2'>Only {book?.availableCopies} left in stock.</p>
-                    <button onClick={() => {if (book?._id) {handleAddToWishlist(book._id);}}} className='flex w-fit mt-4 gap-1 group group-hover:text-pink-700'>
+                    <button onClick={() => { if (book?._id) { handleAddToWishlist(book._id); } }} className='flex w-fit mt-4 gap-1 group group-hover:text-pink-700'>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 relative group-hover:fill-pink-700 group-hover:stroke-inherit cursor-pointer">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                         </svg>
@@ -109,7 +116,7 @@ const BookDescription: React.FC = () => {
                 </div>
             </div>
             {showToast && (
-                <div className={`fixed bottom-16 left-1/2 transform -translate-x-1/2 transition-opacity duration-500 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                <div className={`fixed top-24 right-0 transform -translate-x-1/2 transition-opacity duration-500 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                     <Toast message={toastMessage} />
                 </div>
             )}
