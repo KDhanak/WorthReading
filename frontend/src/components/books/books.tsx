@@ -8,7 +8,7 @@ import Toast from '../bookDescription/toast';
 
 const Books: React.FC = () => {
     const { setBook, filteredBook, loading, selectedCategory, filterBooksByTitle } = useBook();
-    const { cart, addItemToCart } = useCart();
+    const { cart, addItemToCart, fetchCart } = useCart();
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
@@ -32,16 +32,19 @@ const Books: React.FC = () => {
     }
 
     const handleAddToCart = async (bookId: string, availableCopies: number) => {
-        if (isAuthenticated === false) {
+        if (!isAuthenticated) {
             setToastMessage({ success: false, message: 'Please login to add items to your cart' });
-        } else {
-            if (bookId && availableCopies > 0) {
-                const success = await addItemToCart(bookId, 1);
-                if (success) {
-                    setToastMessage({ success: success, message: 'Items added to your cart' });
+        } else if (bookId && availableCopies > 0) {
+            const success = await addItemToCart(bookId, 1); // Calls the API to add the item
+            if (success) {
+                const cartFetchSuccess = await fetchCart(); // Refetch the cart from the server
+                if (cartFetchSuccess) {
+                    setToastMessage({ success: true, message: 'Item added to your cart' });
                 } else {
-                    setToastMessage({ success: success, message: 'There was an error adding this item to your cart' })
+                    setToastMessage({ success: false, message: 'Failed to update the cart' });
                 }
+            } else {
+                setToastMessage({ success: false, message: 'There was an error adding this item to your cart' });
             }
         }
         setShowToast(true);
@@ -74,7 +77,7 @@ const Books: React.FC = () => {
             </div>
             <div className='grid grid-cols-1 lMobile:grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 lLaptop:grid-cols-5 monitor:grid-cols-7 lLaptop:gap-0 4K:gap-x-0 gap-x-14'>
                 {filteredBook.map((book, index) => (
-                    <div key={index} className={`relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border ${isAuthenticated && isBookInCart(book._id) ? 'border-primary_2': 'border-slate-200' } rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]`}>
+                    <div key={index} className={`relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border ${isAuthenticated && isBookInCart(book._id) ? 'border-primary_2' : 'border-slate-200'} rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]`}>
                         <div className="relative w-[175px] h-auto overflow-hidden rounded-t-lg bg-clip-border" onClick={() => fetchSelectedBook(book._id)}>
                             <img
                                 src={book.coverImageUrl}
