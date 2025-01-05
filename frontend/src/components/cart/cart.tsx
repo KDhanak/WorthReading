@@ -1,19 +1,33 @@
-// components/CartComponent.tsx
 import React, { useEffect, useState } from 'react';
 import { useCart } from '../../contexts/cartContext';
 import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
 import CartCounter from './cartCounter';
 import Empty from '../empty/empty';
+import Toast from '../bookDescription/toast';
 
 const Cart: React.FC = () => {
-    const { cart, setError, removeItemFromCart, error, loading, setLoading } = useCart();
+    const { cart, setError, removeItemFromCart, error, loading, setLoading, clearCart } = useCart();
     const navigate = useNavigate();
+    const [toastMessage, setToastMessage] = useState<{ success: boolean; message: string } | null>(null);
+    const [showToast, setShowToast] = useState<boolean>(false);
 
     const handleRemoveItem = async (productId: string) => {
         setLoading(true);
         await removeItemFromCart(productId);
         setLoading(false);
+    };
+
+    const handleClearCart = async () => {
+        setLoading(true);
+        const success = await clearCart();
+        if (success) {
+            setToastMessage({ success: success, message: 'Cart cleared' });
+        } else {
+            setToastMessage({ success: success, message: 'There was an error clearing the cart' });
+        }
+        setLoading(false);
+        setShowToast(true);
     };
 
     useEffect(() => {
@@ -23,9 +37,17 @@ const Cart: React.FC = () => {
         }
     }, [setError, error, navigate]);
 
+    useEffect(() => {
+        if (showToast) {
+            const timer = setTimeout(() => {
+                setShowToast(false);
+            }, 3000);
+        }
+    }, [showToast]);
+
     const total = parseFloat((cart.reduce((total, cartItems) => total + cartItems.quantity * cartItems.price, 0)).toFixed(2));
     const delivery = 5;
-    
+
     if (loading) return <Loading />;
     if (error?.code === 404 || !cart.length) return <Empty message='Your cart is empty.' />
 
@@ -45,7 +67,7 @@ const Cart: React.FC = () => {
 
                                         <label htmlFor="counter-input" className="sr-only">Choose quantity:</label>
                                         <div className="flex items-center justify-between md:order-3 md:justify-end">
-                                            <CartCounter availableCopies={cartItems.productId.availableCopies || 0} onQuantityChange={() => {}} cartProductId={cartItems.productId._id} />
+                                            <CartCounter availableCopies={cartItems.productId.availableCopies || 0} onQuantityChange={() => { }} cartProductId={cartItems.productId._id} />
                                             <div className="text-center md:order-4 md:w-32">
                                                 <p className="text-base font-bold text-primary_4">${(cartItems.price * cartItems.quantity).toFixed(2)}</p>
                                             </div>
@@ -158,9 +180,17 @@ const Cart: React.FC = () => {
                                 <button type="submit" className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-primary_4 hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300">Apply Code</button>
                             </form>
                         </div>
+                        <div className='flex justify-center'>
+                            <button className='text-red-500 cursor-pointer hover:text-pink-700 underline' onClick={() => handleClearCart()}>clear cart</button>
+                        </div>
                     </div>
                 </div>
             </div>
+            {showToast && (
+                <div className={`fixed top-24 right-0 transform -translate-x-1/2 transition-opacity duration-500 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                    <Toast message={toastMessage} />
+                </div>
+            )}
         </section>
     );
 };

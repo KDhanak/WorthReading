@@ -6,7 +6,7 @@ import authRouter from './routes/authRoutes.js';
 import bookRouter from './routes/bookRoutes.js';
 import cartRouter from './routes/cartRoutes.js';
 import cookieParser from 'cookie-parser';
-import wishlistRouter from './routes/wishlistRoutes.js';
+// import wishlistRouter from './routes/wishlistRoutes.js';
 
 dotenv.config();
 
@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/book', bookRouter);
 app.use('/api/cart', cartRouter);
-app.use('/api/wishlist', wishlistRouter);
+// app.use('/api/wishlist', wishlistRouter);
 
 // Connect to MongoDB and start server
 mongoose
