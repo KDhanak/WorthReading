@@ -44,7 +44,6 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     const addItemToWishlist = async (productId: string) => {
-        console.log(productId);
         setLoading(true);
         try {
             const { data } = await api.post('/api/wishlist/add', { productId });

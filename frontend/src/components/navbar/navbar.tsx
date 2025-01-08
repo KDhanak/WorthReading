@@ -177,6 +177,7 @@ const NavBar: React.FC = () => {
                                         <ul className="p-2 text-start text-sm font-medium text-primary_1">
                                             <li><a href="#" title="" className="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent-primary_4_light"> My Account </a></li>
                                             <li><a href="#" title="" className="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent-primary_4_light"> My Orders </a></li>
+                                            <li><a href="/wishlist" title="" className="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent-primary_4_light"> My Wishlist </a></li>
                                         </ul>
 
                                         <div className="p-2 text-sm font-medium text-primary_1">

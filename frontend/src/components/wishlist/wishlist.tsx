@@ -1,39 +1,62 @@
-import React from "react"
+import React, { useState } from "react"
 import Loading from "../loading/loading";
-import { useState } from "react";
 import { useBook } from "../../contexts/bookContext";
+import { useWishlist } from "../../contexts/wishlistContext";
+import { useAuth } from "../../contexts/authContext";
+import { useCart } from "../../contexts/cartContext";
+import Toast from '../bookDescription/toast';
 
 const Wishlist: React.FC = () => {
-    const { setBook, filteredBook, loading, books, error,selectedCategory, filterBooksByTitle } = useBook();
-    const [query, setQuery] = useState('');
+    const { loading } = useBook();
+    const { wishlist } = useWishlist();
+    const { isAuthenticated } = useAuth();
+    const { cart, addItemToCart, fetchCart } = useCart();
+    const [showToast, setShowToast] = useState<boolean>(false);
+    const [toastMessage, setToastMessage] = useState<{ success: boolean; message: string } | null>(null);
 
     if (loading) return <Loading />;
 
+    const handleAddToCart = async (bookId: string, availableCopies: number) => {
+        if (!isAuthenticated) {
+            setToastMessage({ success: false, message: 'Please login to add items to your cart' });
+        } else if (bookId && availableCopies > 0) {
+            const success = await addItemToCart(bookId, 1);
+            if (success) {
+                const cartFetchSuccess = await fetchCart();
+                if (cartFetchSuccess) {
+                    setToastMessage({ success: true, message: 'Item added to your cart' });
+                } else {
+                    setToastMessage({ success: false, message: 'Failed to update the cart' });
+                }
+            } else {
+                setToastMessage({ success: false, message: 'There was an error adding this item to your cart' });
+            }
+        }
+        setShowToast(true);
+
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
+    }
+
+    const isBookInWishlist = (bookId: string) => {
+        return wishlist.some((item) => item.productId._id === bookId);
+    };
+
+    const isBookInCart = (bookId: string) => {
+        return cart.some((item) => item.productId._id === bookId);
+    };
+
     return (
         <div className='mx-52'>
-            {/* <div className='flex w-full items-center justify-between mt-3'>
-                <p className="font-bold text-lg text-primary_4 mx-auto">{selectedCategory}</p>
-                <form className="relative w-full max-w-sm shadow-sm" onSubmit={handleSearchSubmit}>
-                    <label htmlFor="default-search" className="mb-2 text-sm font-medium sr-only">Search</label>
-                    <div className="relative">
-                        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg className="w-4 h-4 text-primary_1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                            </svg>
-                        </div>
-                        <input type="search" onChange={handleInputChange} id="default-search" className="block w-full h-12 ps-10 text-sm text-primary_1 border rounded-lg bg-primary_4 focus:ring-primary_3 focus:border-primary_3 placeholder:text-primary_1" placeholder="Search for your favourite book" required />
-                        <button type="submit" className="text-primary_4 border border-primary_2 absolute h-8 end-2.5 bottom-2.5 bg-primary_1 focus:ring-4 focus:outline-none focus:ring-primary_3 font-medium rounded-lg text-sm px-4 py-1">Search</button>
-                    </div>
-                </form>
-            </div>
             <div className='grid grid-cols-1 lMobile:grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 lLaptop:grid-cols-5 monitor:grid-cols-7 lLaptop:gap-0 4K:gap-x-0 gap-x-14'>
-                {filteredBook.map((book, index) => (
-                    <div key={index} className="relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border border-slate-200 rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]" onClick={() => fetchSelectedBook(book._id)}>
-                        <div className="relative w-44 h-auto overflow-hidden rounded-t-lg bg-clip-border">
+                {wishlist.map((book, index) => (
+                    <div key={index} className={`relative flex-col my-4 justify-center mx-auto bg-white shadow-sm border ${isAuthenticated && isBookInWishlist(book.productId._id) && isBookInCart(book.productId._id) ? 'border-t-primary_2 border-l-primary_2 border-b-pink-700 border-r-pink-700' : 'border-pink-700'} rounded-lg w-44 h-auto grid grid-rows-[auto,1fr,auto]`}>
+                        <div className="relative w-[175px] h-auto overflow-hidden rounded-t-lg bg-clip-border">
                             <img
-                                src={`data:image/jpeg;base64,${book.coverImageUrl}`}
+                                src={book.productId.coverImageUrl}
                                 alt="card-image"
-                                className="h-56 w-44 object-cover rounded-t-lg cursor-pointer"
+                                className="h-56 w-[174px] object-cover rounded-t-lg cursor-pointer"
                             />
                         </div>
                         <div className="flex justify-between mx-3 mt-2">
@@ -43,10 +66,11 @@ const Wishlist: React.FC = () => {
                             <svg
                                 stroke="currentColor"
                                 fill="none"
-                                className="w-7 h-7 flex-shrink-0 cursor-pointer hover:fill-primary_2 hover:stroke-primary_2"
+                                className={`w-7 h-7 flex-shrink-0 cursor-pointer hover:fill-primary_2 hover:stroke-primary_2 ${isAuthenticated && isBookInCart(book.productId._id) ? 'fill-primary_2 stroke-primary_2' : 'fill-none'}`}
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
+                                onClick={() => handleAddToCart(book.productId._id, book.productId.availableCopies)}
                             >
                                 <path
                                     strokeLinecap="round"
@@ -60,13 +84,18 @@ const Wishlist: React.FC = () => {
                             <p className="text-primary_3 text-base font-semibold">
                                 ${book.price}
                             </p>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="mt-1 size-5 relative hover:fill-pink-700 hover:stroke-inherit cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`mt-1 size-5 relative hover:fill-pink-700 hover:stroke-inherit ${isAuthenticated && isBookInWishlist(book.productId._id) ? 'fill-pink-700 stroke-pink-700' : 'fill-none'} cursor-pointer`}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                             </svg>
                         </div>
                     </div>
                 ))}
-            </div> */}
+            </div>
+            {showToast && (
+                <div className={`fixed top-24 -right-24 transform -translate-x-1/2 transition-opacity duration-500 ${showToast ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                    <Toast message={toastMessage} />
+                </div>
+            )}
         </div>
     )
 }

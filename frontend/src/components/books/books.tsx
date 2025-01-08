@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useBook } from '../../contexts/bookContext';
 import { useCart } from '../../contexts/cartContext';
 import { useAuth } from '../../contexts/authContext';
+import { useWishlist } from '../../contexts/wishlistContext';
 import Loading from '../loading/loading';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../bookDescription/toast';
@@ -10,6 +11,7 @@ const Books: React.FC = () => {
     const { setBook, filteredBook, loading, selectedCategory, filterBooksByTitle } = useBook();
     const { cart, addItemToCart, fetchCart } = useCart();
     const { isAuthenticated } = useAuth();
+    const { wishlist, addItemToWishlist, fetchWishlist } = useWishlist();
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
     const [toastMessage, setToastMessage] = useState<{ success: boolean; message: string } | null>(null);
@@ -35,9 +37,9 @@ const Books: React.FC = () => {
         if (!isAuthenticated) {
             setToastMessage({ success: false, message: 'Please login to add items to your cart' });
         } else if (bookId && availableCopies > 0) {
-            const success = await addItemToCart(bookId, 1); // Calls the API to add the item
+            const success = await addItemToCart(bookId, 1); 
             if (success) {
-                const cartFetchSuccess = await fetchCart(); // Refetch the cart from the server
+                const cartFetchSuccess = await fetchCart(); 
                 if (cartFetchSuccess) {
                     setToastMessage({ success: true, message: 'Item added to your cart' });
                 } else {
@@ -54,8 +56,39 @@ const Books: React.FC = () => {
         }, 3000);
     }
 
+    const handleAddToWishlist = async (bookId: string) => {
+        if (!isAuthenticated) {
+            setToastMessage({ success: false, message: 'Please login to add items to your wishlist' });
+        } else if (bookId) {
+            const success = await addItemToWishlist(bookId); 
+            if (success) {
+                const wishlistFetchSuccess = await fetchWishlist(); 
+                if (wishlistFetchSuccess) {
+                    setToastMessage({ success: true, message: 'Item added to your wishlist' });
+                } else {
+                    setToastMessage({ success: false, message: 'Failed to update the wishlist' });
+                }
+            } else {
+                if (isBookInWishlist(bookId)) {
+                    setToastMessage({ success: false, message: 'This item is already in your wishlist' });
+                } else {
+                    setToastMessage({ success: false, message: 'There was an error adding this item to your wishlist' });
+                }
+            }
+        }
+        setShowToast(true);
+
+        setTimeout(() => {
+            setShowToast(false);
+        }, 3000);
+    }
+
     const isBookInCart = (bookId: string) => {
         return cart.some((item) => item.productId._id === bookId);
+    };
+
+    const isBookInWishlist = (bookId: string) => {
+        return wishlist.some((item) => item.productId._id === bookId);
     };
 
     return (
@@ -109,7 +142,7 @@ const Books: React.FC = () => {
                             <p className="text-primary_3 text-base font-semibold">
                                 ${book.price}
                             </p>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="mt-1 size-5 relative hover:fill-pink-700 hover:stroke-inherit cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" onClick={() => handleAddToWishlist(book._id)} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`mt-1 size-5 relative hover:fill-pink-700 hover:stroke-inherit ${isAuthenticated && isBookInWishlist(book._id) ? 'fill-pink-700 stroke-pink-700' : 'fill-none'} cursor-pointer`}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                             </svg>
                         </div>
