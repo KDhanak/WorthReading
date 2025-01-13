@@ -2,10 +2,11 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import authRouter from '../routes/authRoutes.js';
-import bookRouter from '../routes/bookRoutes.js';
-import cartRouter from '../routes/cartRoutes.js';
+import authRouter from './routes/authRoutes.js';
+import bookRouter from './routes/bookRoutes.js';
+import cartRouter from './routes/cartRoutes.js';
 import cookieParser from 'cookie-parser';
+import wishlistRouter from './routes/wishlistRoutes.js';
 
 dotenv.config();
 
@@ -13,32 +14,27 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const F_URL = process.env.FRONTEND_URL;
 
-app.set('trust proxy', true);
-
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: F_URL,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+	origin: F_URL,
+	credentials: true
 }));
 
-
 app.get('/', (req, res) => {
-  res.status(200).send('Hello, JavaScript with Express using ES Modules!');
+	res.send('Hello, JavaScript with Express using ES Modules!');
 });
 
 app.use('/api/auth', authRouter);
 app.use('/api/book', bookRouter);
 app.use('/api/cart', cartRouter);
+app.use('/api/wishlist', wishlistRouter);
 
 // Connect to MongoDB and start server
 mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('Connected to MongoDB');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((error) => console.error(`MongoDB connection error: ${error}`));
-
-export default app;
+	.connect(process.env.MONGO_URI)
+	.then(() => {
+		console.log('Connected to MongoDB');
+		app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+	})
+	.catch((error) => console.error(`MongoDB connection error: ${error}`));
