@@ -56,7 +56,7 @@ const BookDescription: React.FC = () => {
         setMatchedBookQuantity(0);
     };
 
-    const handleAddToWishlist = async (bookId: string) => {
+    const handleAddToWishlist = async (bookId: string | undefined) => {
         if (!isAuthenticated) {
             setToastMessage({ success: false, message: 'Please login to add items to your wishlist' });
         } else if (bookId) {
@@ -91,7 +91,7 @@ const BookDescription: React.FC = () => {
         }
     }, [showToast]);
 
-    const isBookInWishlist = (bookId: string) => {
+    const isBookInWishlist = (bookId: string | undefined) => {
         return wishlist.some((item) => item.productId._id === bookId);
     };
 

@@ -67,7 +67,8 @@ export interface WishlistItem {
     title: string;
     author: string;
     price: number;
-    coverImageUrl?: string; 
+    coverImageUrl?: string;
+    productId: Books; 
 }
 
 export interface WishlistContextProps {
