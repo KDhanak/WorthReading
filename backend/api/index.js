@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const F_URL = 'https://worth-reading-frontend.vercel.app/';
+const F_URL = process.env.FRONTEND_URL;
 
 console.log(F_URL);
 console.error(F_URL);
