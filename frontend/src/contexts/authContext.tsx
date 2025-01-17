@@ -8,6 +8,7 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
 	const [error, setError] = useState<string | null>(null);
+		const [loading, setLoading] = useState<boolean>(false);
 
 	const handleApiError = (error: unknown, defaultMessage: string) => {
 		if (axios.isAxiosError(error) && error.response) {
@@ -24,6 +25,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 				setUser(response.data.user);
 			} catch (error: unknown) {
 				console.error('Failed to fetch user', error);
+			} finally {
+				setLoading(false);
 			}
 		};
 		checkLoggedInUser();
@@ -34,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 			const response = await api.post('/api/auth/login', { email, password }, { withCredentials: true });
 			setUser(response.data.user);
 			setError(null);
+			await new Promise(resolve => setTimeout(resolve, 100));
 			return true;
 		} catch (error: unknown) {
 			if (error instanceof AxiosError) {
