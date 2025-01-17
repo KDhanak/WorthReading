@@ -16,6 +16,9 @@ const Cart: React.FC = () => {
     const { isAuthenticated } = useAuth();
     const { wishlist, fetchWishlist, addItemToWishlist } = useWishlist();
 
+    if (loading) return <Loading />;
+    if (error?.code === 404 || !cart.length) return <Empty message='Your cart is empty.' />
+
     const handleRemoveItem = async (productId: string) => {
         setLoading(true);
         await removeItemFromCart(productId);
@@ -82,9 +85,6 @@ const Cart: React.FC = () => {
 
     const total = parseFloat((cart.reduce((total, cartItems) => total + cartItems.quantity * cartItems.price, 0)).toFixed(2));
     const delivery = 5;
-
-    if (loading) return <Loading />;
-    if (error?.code === 404 || !cart.length) return <Empty message='Your cart is empty.' />
 
     return (
         <section className="mx-52 my-10">
