@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useCart } from '../../contexts/cartContext';
 import { useAuth } from '../../contexts/authContext';
 import { useWishlist } from '../../contexts/wishlistContext';
@@ -35,20 +35,16 @@ const Cart: React.FC = () => {
         if (!isAuthenticated) {
             setToastMessage({ success: false, message: 'Please login to add items to your wishlist' });
         } else if (bookId) {
-            const success = await addItemToWishlist(bookId); 
+            const success = await addItemToWishlist(bookId);
             if (success) {
-                const wishlistFetchSuccess = await fetchWishlist(); 
+                const wishlistFetchSuccess = await fetchWishlist();
                 if (wishlistFetchSuccess) {
                     setToastMessage({ success: true, message: 'Item added to your wishlist' });
                 } else {
                     setToastMessage({ success: false, message: 'Failed to update the wishlist' });
                 }
             } else {
-                if (isBookInWishlist(bookId)) {
-                    setToastMessage({ success: false, message: 'This item is already in your wishlist' });
-                } else {
-                    setToastMessage({ success: false, message: 'There was an error adding this item to your wishlist' });
-                }
+                setToastMessage({ success: false, message: 'There was an error adding this item to your wishlist' });
             }
         }
         setShowToast(true);
@@ -58,9 +54,12 @@ const Cart: React.FC = () => {
         }, 3000);
     }
 
-    const isBookInWishlist = (bookId: string) => {
-        return wishlist.some((item) => item.productId._id === bookId) ?? false;
-    };
+    const isBookInWishlist = useMemo(() => {
+        return cart.map(cartItem => ({
+            id: cartItem.productId._id,
+            inWishlist: wishlist?.some(item => item.productId._id === cartItem.productId._id) ?? false
+        }));
+    }, [cart, wishlist]);
 
     useEffect(() => {
         if (error?.code === 401) {
@@ -107,10 +106,12 @@ const Cart: React.FC = () => {
                                             <a href="#" className="text-base font-medium text-primary_4">{cartItems.productId.title}</a>
                                             <div className="flex items-center gap-4">
                                                 <button className='flex w-fit gap-1 group group-hover:text-pink-700' onClick={() => handleAddToWishlist(cartItems.productId._id)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-5 relative ${isAuthenticated && isBookInWishlist(cartItems.productId._id) ? 'fill-pink-700 stroke-pink-700': 'fill-none'} group-hover:fill-pink-700 group-hover:stroke-inherit cursor-pointer`}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-5 relative ${isAuthenticated && isBookInWishlist.some(item => item.id === cartItems.productId._id) ? 'fill-pink-700 stroke-pink-700' : 'fill-none'} group-hover:fill-pink-700 group-hover:stroke-inherit cursor-pointer`}>
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                                     </svg>
-                                                    <p className={`font-medium text-sm ${isAuthenticated && isBookInWishlist(cartItems.productId._id) ? 'text-pink-700' : 'text-accent-primary_4_light'} group-hover:text-pink-700 cursor-pointer`}>{isAuthenticated && isBookInWishlist(cartItems.productId._id) ? 'In Wishlist' : 'Add to Wishlist'}</p>
+                                                    <p className={`font-medium text-sm ${isAuthenticated && isBookInWishlist.find(item => item.id === cartItems.productId._id)?.inWishlist ? 'text-pink-700' : 'text-accent-primary_4_light'} group-hover:text-pink-700 cursor-pointer`}>
+                                                        {isAuthenticated && isBookInWishlist.find(item => item.id === cartItems.productId._id)?.inWishlist ? 'In Wishlist' : 'Add to Wishlist'}
+                                                    </p>
                                                 </button>
 
                                                 <button type="button" disabled={loading} onClick={() => handleRemoveItem(cartItems.productId._id)} className="inline-flex items-center text-sm font-medium text-red-600 group group-hover:text-red-900">
