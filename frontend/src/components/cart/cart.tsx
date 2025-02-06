@@ -20,19 +20,13 @@ const Cart: React.FC = () => {
     if (error?.code === 404 || !cart.length) return <Empty message='Your cart is empty.' />
 
     const handleRemoveItem = async (productId: string) => {
-        setLoading(true);
         await removeItemFromCart(productId);
-        setLoading(false);
     };
 
     const handleClearCart = async () => {
         setLoading(true);
         const success = await clearCart();
-        if (success) {
-            setToastMessage({ success: success, message: 'Cart cleared' });
-        } else {
-            setToastMessage({ success: success, message: 'There was an error clearing the cart' });
-        }
+        setToastMessage({ success, message: success ? 'Cart cleared' : 'Error clearing cart' });
         setLoading(false);
         setShowToast(true);
     };
@@ -65,7 +59,7 @@ const Cart: React.FC = () => {
     }
 
     const isBookInWishlist = (bookId: string) => {
-        return wishlist.some((item) => item.productId._id === bookId);
+        return wishlist.some((item) => item.productId._id === bookId) ?? false;
     };
 
     useEffect(() => {
@@ -80,6 +74,7 @@ const Cart: React.FC = () => {
             const timer = setTimeout(() => {
                 setShowToast(false);
             }, 3000);
+            return () => clearTimeout(timer);
         }
     }, [showToast]);
 

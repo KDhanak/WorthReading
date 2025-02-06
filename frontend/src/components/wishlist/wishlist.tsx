@@ -48,7 +48,7 @@ const Wishlist: React.FC = () => {
         return cart.some((item) => item.productId._id === bookId);
     };
 
-    if (error?.code === 404 || !cart.length) return <Empty message='Your wishlist is empty.' />
+    if (error?.code === 404 || !cart.length || !loading) return <Empty message='Your wishlist is empty.' />
 
     return (
         <div className='mx-52'>
