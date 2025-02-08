@@ -22,8 +22,6 @@ const Books: React.FC = () => {
         navigate(`/book/${bookId}`);
     };
 
-    if (loading) return <Loading />;
-
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(event.target.value);
     };
@@ -90,6 +88,8 @@ const Books: React.FC = () => {
     const isBookInWishlist = (bookId: string) => {
         return wishlist.some((item) => item.productId._id === bookId);
     };
+
+    if (loading) return <Loading />;
 
     return (
         <div className='mx-52'>

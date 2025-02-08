@@ -12,7 +12,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 	const handleApiError = (error: unknown, defaultMessage: string) => {
 		if (axios.isAxiosError(error) && error.response) {
-			setError(error.response.data.message || defaultMessage);
+			setError(error.response.data?.message || defaultMessage);
 		} else {
 			setError(defaultMessage);
 		}
@@ -20,6 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 	useEffect(() => {
 		const checkLoggedInUser = async () => {
+			setLoading(true);
 			try {
 				const response = await api.get('/api/auth/validate', { withCredentials: true });
 				setUser(response.data.user);
@@ -33,6 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 	}, []);
 
 	const login = async (email: string, password: string): Promise<boolean> => {
+		setLoading(true);
 		try {
 			const response = await api.post('/api/auth/login', { email, password }, { withCredentials: true });
 			setUser(response.data.user);
@@ -48,6 +50,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 				}
 			}
 			return false;
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -64,18 +68,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 		}
 	};
 
-	const logout = () => {
-		api.post('/api/auth/logout', {}, { withCredentials: true })
-			.then(() => {
-				setUser(null);
-			})
-			.catch((error: unknown) => console.error('Logout error:', error));
+	const logout = async () => {
+		setLoading(true);
+		try {
+			await api.post('/api/auth/logout', {}, { withCredentials: true });
+			setUser(null);
+		} catch (error: unknown) {
+			console.error('Logout error:', error);
+			handleApiError(error, 'An error occurred during logout');
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const isAuthenticated = !!user;
 
 	return (
-		<AuthContext.Provider value={{ user, login, register, logout, isAuthenticated, error }}>
+		<AuthContext.Provider value={{ user, login, register, logout, isAuthenticated, error, loading }}>
 			{children}
 		</AuthContext.Provider>
 	);

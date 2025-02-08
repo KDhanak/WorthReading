@@ -10,6 +10,11 @@ const NavBar: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const [authStatus, setAuthStatus] = useState(isAuthenticated);
+
+    useEffect(() => {
+        setAuthStatus(isAuthenticated);
+    }, [isAuthenticated]);
 
     const toggleMenu = () => {
         setIsMenuOpen((prev) => !prev);
@@ -37,14 +42,14 @@ const NavBar: React.FC = () => {
         } finally {
             setLoading(false);
         }
-        
+
     }
 
     const handleSignIn = async (e: any) => {
         try {
             e.preventDefault();
             setLoading(true);
-            navigate('/login');     
+            navigate('/login');
         } catch (error) {
             console.error(error);
         } finally {
@@ -102,7 +107,7 @@ const NavBar: React.FC = () => {
                     </div>
 
                     <div className="flex relative items-center lg:space-x-2">
-                        {isAuthenticated ? (
+                        {authStatus ? (
                             <div>
                                 <button
                                     className="inline-flex items-center rounded-lg justify-center p-2 text-sm font-medium leading-none"
