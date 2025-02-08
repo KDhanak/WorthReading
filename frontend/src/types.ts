@@ -41,6 +41,7 @@ export interface AuthContextProps {
     logout: () => void;
     isAuthenticated: boolean;
     error: string | null;
+    loading: boolean;
 }
 
 export interface CartItem {
@@ -67,8 +68,8 @@ export interface WishlistItem {
     title: string;
     author: string;
     price: number;
-    coverImageUrl?: string; 
-    productId: Books;
+    coverImageUrl?: string;
+    productId: Books; 
 }
 
 export interface WishlistContextProps {

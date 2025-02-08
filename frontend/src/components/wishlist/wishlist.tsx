@@ -5,10 +5,11 @@ import { useWishlist } from "../../contexts/wishlistContext";
 import { useAuth } from "../../contexts/authContext";
 import { useCart } from "../../contexts/cartContext";
 import Toast from '../bookDescription/toast';
+import Empty from '../empty/empty';
 
 const Wishlist: React.FC = () => {
     const { loading } = useBook();
-    const { wishlist } = useWishlist();
+    const { error, wishlist } = useWishlist();
     const { isAuthenticated } = useAuth();
     const { cart, addItemToCart, fetchCart } = useCart();
     const [showToast, setShowToast] = useState<boolean>(false);
@@ -46,6 +47,8 @@ const Wishlist: React.FC = () => {
     const isBookInCart = (bookId: string) => {
         return cart.some((item) => item.productId._id === bookId);
     };
+
+    if (error?.code === 404 || !cart.length || !loading) return <Empty message='Your wishlist is empty.' />
 
     return (
         <div className='mx-52'>
