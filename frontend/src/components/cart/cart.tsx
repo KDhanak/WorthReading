@@ -27,6 +27,7 @@ const Cart: React.FC = () => {
 
     const handleRemoveItem = async (productId: string) => {
         await removeItemFromCart(productId);
+        fetchCart();
     };
 
     const handleClearCart = async () => {

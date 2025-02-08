@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import Toast from '../bookDescription/toast';
 
 const Books: React.FC = () => {
-    const { setBook, filteredBook, loading, selectedCategory, filterBooksByTitle } = useBook();
+    const { setBook, filteredBook, loading, selectedCategory, filterBooksByTitle, setLoading } = useBook();
     const { cart, addItemToCart, fetchCart } = useCart();
     const { isAuthenticated } = useAuth();
     const { wishlist, addItemToWishlist, fetchWishlist } = useWishlist();
@@ -34,10 +34,19 @@ const Books: React.FC = () => {
     const handleAddToCart = async (bookId: string, availableCopies: number) => {
         if (!isAuthenticated) {
             setToastMessage({ success: false, message: 'Please login to add items to your cart' });
-        } else if (bookId && availableCopies > 0) {
-            const success = await addItemToCart(bookId, 1); 
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
+            return;
+        }
+
+        if (!bookId || availableCopies <= 0) return;
+
+        setLoading(true); // Start loading 
+
+        try {
+            const success = await addItemToCart(bookId, 1);
             if (success) {
-                const cartFetchSuccess = await fetchCart(); 
+                const cartFetchSuccess = await fetchCart();
                 if (cartFetchSuccess) {
                     setToastMessage({ success: true, message: 'Item added to your cart' });
                 } else {
@@ -46,21 +55,22 @@ const Books: React.FC = () => {
             } else {
                 setToastMessage({ success: false, message: 'There was an error adding this item to your cart' });
             }
+        } catch (error) {
+            setToastMessage({ success: false, message: 'An unexpected error occurred' });
+        } finally {
+            setLoading(false); // Stop loading
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
         }
-        setShowToast(true);
-
-        setTimeout(() => {
-            setShowToast(false);
-        }, 3000);
-    }
+    };
 
     const handleAddToWishlist = async (bookId: string) => {
         if (!isAuthenticated) {
             setToastMessage({ success: false, message: 'Please login to add items to your wishlist' });
         } else if (bookId) {
-            const success = await addItemToWishlist(bookId); 
+            const success = await addItemToWishlist(bookId);
             if (success) {
-                const wishlistFetchSuccess = await fetchWishlist(); 
+                const wishlistFetchSuccess = await fetchWishlist();
                 if (wishlistFetchSuccess) {
                     setToastMessage({ success: true, message: 'Item added to your wishlist' });
                 } else {
