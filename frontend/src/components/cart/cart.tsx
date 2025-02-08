@@ -60,11 +60,11 @@ const Cart: React.FC = () => {
     };
 
     useEffect(() => {
-        if (error?.code === 401) {
+        if (!isAuthenticated && error?.code === 401) {
             navigate('/login');
             setError(null);
         }
-    }, [setError, error, navigate]);
+    }, [isAuthenticated, setError, error, navigate]);
 
     useEffect(() => {
         if (showToast) {
@@ -79,7 +79,7 @@ const Cart: React.FC = () => {
     const delivery = 5;
 
     if (loading) return <Loading />;
-    if (error?.code === 404 || !cart.length) return <Empty message='Your cart is empty.' />
+    if (error?.code === 404 || !cart.length && !loading) return <Empty message='Your cart is empty.' />
 
     return (
         <section className="mx-52 my-10">
