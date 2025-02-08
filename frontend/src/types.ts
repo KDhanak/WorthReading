@@ -25,6 +25,7 @@ export interface BookContextProps {
     books: Books[];
     filteredBook: Books[];
     loading: boolean;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     error: string | null;
     fetchBooks: () => Promise<boolean>;
     fetchBookById: (id: string) => Promise<boolean>;

@@ -81,7 +81,7 @@ export const BookProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     return (
-        <BookContext.Provider value={{setBook, book, books, loading, error, fetchBooks, fetchBookById, filteredBook, filterBooksByCategory, selectedCategory, resetCategory, filterBooksByTitle }}>
+        <BookContext.Provider value={{setBook, book, books, loading, setLoading, error, fetchBooks, fetchBookById, filteredBook, filterBooksByCategory, selectedCategory, resetCategory, filterBooksByTitle }}>
             {children}
         </BookContext.Provider>
     )
