@@ -9,13 +9,17 @@ import Empty from '../empty/empty';
 import Toast from '../bookDescription/toast';
 
 const Cart: React.FC = () => {
-    const { cart, setError, removeItemFromCart, error, loading, setLoading, clearCart } = useCart();
+    const { cart, setError, removeItemFromCart, error, loading, setLoading, clearCart, fetchCart } = useCart();
     const navigate = useNavigate();
     const [toastMessage, setToastMessage] = useState<{ success: boolean; message: string } | null>(null);
     const [showToast, setShowToast] = useState<boolean>(false);
     const { isAuthenticated } = useAuth();
     const { wishlist, fetchWishlist, addItemToWishlist } = useWishlist();
     const [authStatus, setAuthStatus] = useState(isAuthenticated);
+
+    useEffect(() => {
+        fetchCart();
+    }, []);
 
     useEffect(() => {
         setAuthStatus(isAuthenticated);
