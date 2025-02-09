@@ -9,29 +9,86 @@ import Empty from '../empty/empty';
 
 const Wishlist: React.FC = () => {
     const { loading } = useBook();
-    const { error, wishlist } = useWishlist();
+    const { error, wishlist, removeItemFromWishlist, fetchWishlist, setLoading } = useWishlist();
     const { isAuthenticated } = useAuth();
-    const { cart, addItemToCart, fetchCart } = useCart();
+    const { cart, addItemToCart, fetchCart, removeItemFromCart } = useCart();
     const [showToast, setShowToast] = useState<boolean>(false);
     const [toastMessage, setToastMessage] = useState<{ success: boolean; message: string } | null>(null);
 
-    if (loading) return <Loading />;
+    const isBookInWishlist = (bookId: string) => {
+        return wishlist.some((item) => item.productId._id === bookId);
+    };
+
+    const isBookInCart = (bookId: string) => {
+        return cart.some((item) => item.productId._id === bookId);
+    }; 
 
     const handleAddToCart = async (bookId: string, availableCopies: number) => {
         if (!isAuthenticated) {
             setToastMessage({ success: false, message: 'Please login to add items to your cart' });
-        } else if (bookId && availableCopies > 0) {
-            const success = await addItemToCart(bookId, 1);
-            if (success) {
-                const cartFetchSuccess = await fetchCart();
-                if (cartFetchSuccess) {
-                    setToastMessage({ success: true, message: 'Item added to your cart' });
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
+            return;
+        }
+
+        if (!bookId || availableCopies <= 0) return;
+
+        setLoading(true);
+
+        try {
+            if (isBookInCart(bookId)) {
+                console.log(isBookInCart(bookId));
+                const success = await removeItemFromCart(bookId);
+                console.log(isBookInCart(bookId));
+                console.log(success);
+                if (success) {
+                    const cartFetchSuccess = await fetchCart();
+                    if (cartFetchSuccess) {
+                        setToastMessage({ success: true, message: 'Item removed from your cart' });
+                    } else {
+                        setToastMessage({ success: false, message: 'Failed to update the cart' });
+                    }
                 } else {
-                    setToastMessage({ success: false, message: 'Failed to update the cart' });
+                    setToastMessage({ success: false, message: 'There was an error removing this item from your cart' });
                 }
             } else {
-                setToastMessage({ success: false, message: 'There was an error adding this item to your cart' });
+                const success = await addItemToCart(bookId, 1);
+                if (success) {
+                    const cartFetchSuccess = await fetchCart();
+                    if (cartFetchSuccess) {
+                        setToastMessage({ success: true, message: 'Item added to your cart' });
+                    } else {
+                        setToastMessage({ success: false, message: 'Failed to update the cart' });
+                    }
+                } else {
+                    setToastMessage({ success: false, message: 'There was an error adding this item to your cart' });
+                }
             }
+
+        } catch (error) {
+            setToastMessage({ success: false, message: 'An unexpected error occurred' });
+        } finally {
+            setLoading(false); // Stop loading
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
+        }
+    };
+
+    const handleRemoveFromWhistlist = async (bookId: string) => {
+        if (!isAuthenticated) {
+            setToastMessage({ success: false, message: 'Please login to update items of your wishlist' });
+        } else if (bookId) {
+                const success = await removeItemFromWishlist(bookId);
+                if (success) {
+                    const wishlistFetchSuccess = await fetchWishlist();
+                    if (wishlistFetchSuccess) {
+                        setToastMessage({ success: true, message: 'Item removed from your wishlist' });
+                    } else {
+                        setToastMessage({ success: false, message: 'Failed to update the wishlist' });
+                    }
+                } else {
+                    setToastMessage({ success: false, message: 'There was an error removing this item from your wishlist' });
+                }
         }
         setShowToast(true);
 
@@ -40,15 +97,8 @@ const Wishlist: React.FC = () => {
         }, 3000);
     }
 
-    const isBookInWishlist = (bookId: string) => {
-        return wishlist.some((item) => item.productId._id === bookId);
-    };
-
-    const isBookInCart = (bookId: string) => {
-        return cart.some((item) => item.productId._id === bookId);
-    };
-
-    if (error?.code === 404 || !cart.length || !loading) return <Empty message='Your wishlist is empty.' />
+    if (loading) return <Loading />;
+    if (error?.code === 404 || !cart.length && !loading) return <Empty message='Your wishlist is empty.' />
 
     return (
         <div className='mx-52'>
@@ -87,7 +137,7 @@ const Wishlist: React.FC = () => {
                             <p className="text-primary_3 text-base font-semibold">
                                 ${book.price}
                             </p>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`mt-1 size-5 relative hover:fill-pink-700 hover:stroke-inherit ${isAuthenticated && isBookInWishlist(book.productId._id) ? 'fill-pink-700 stroke-pink-700' : 'fill-none'} cursor-pointer`}>
+                            <svg xmlns="http://www.w3.org/2000/svg" onClick={() => handleRemoveFromWhistlist(book.productId._id)} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`mt-1 size-5 relative hover:fill-pink-700 hover:stroke-inherit ${isAuthenticated && isBookInWishlist(book.productId._id) ? 'fill-pink-700 stroke-pink-700' : 'fill-none'} cursor-pointer`}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                             </svg>
                         </div>

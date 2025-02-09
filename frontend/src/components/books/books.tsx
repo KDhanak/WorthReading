@@ -9,9 +9,9 @@ import Toast from '../bookDescription/toast';
 
 const Books: React.FC = () => {
     const { setBook, filteredBook, loading, selectedCategory, filterBooksByTitle, setLoading } = useBook();
-    const { cart, addItemToCart, fetchCart } = useCart();
+    const { cart, addItemToCart, fetchCart, removeItemFromCart } = useCart();
     const { isAuthenticated } = useAuth();
-    const { wishlist, addItemToWishlist, fetchWishlist } = useWishlist();
+    const { wishlist, addItemToWishlist, fetchWishlist, removeItemFromWishlist } = useWishlist();
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
     const [toastMessage, setToastMessage] = useState<{ success: boolean; message: string } | null>(null);
@@ -31,6 +31,14 @@ const Books: React.FC = () => {
         filterBooksByTitle(query);
     }
 
+    const isBookInCart = (bookId: string) => {
+        return cart.some((item) => item.productId._id === bookId);
+    };
+
+    const isBookInWishlist = (bookId: string) => {
+        return wishlist.some((item) => item.productId._id === bookId);
+    };
+
     const handleAddToCart = async (bookId: string, availableCopies: number) => {
         if (!isAuthenticated) {
             setToastMessage({ success: false, message: 'Please login to add items to your cart' });
@@ -41,20 +49,38 @@ const Books: React.FC = () => {
 
         if (!bookId || availableCopies <= 0) return;
 
-        setLoading(true); // Start loading 
+        setLoading(true);
 
         try {
-            const success = await addItemToCart(bookId, 1);
-            if (success) {
-                const cartFetchSuccess = await fetchCart();
-                if (cartFetchSuccess) {
-                    setToastMessage({ success: true, message: 'Item added to your cart' });
+            if (isBookInCart(bookId)) {
+                console.log(isBookInCart(bookId));
+                const success = await removeItemFromCart(bookId);
+                console.log(isBookInCart(bookId));
+                console.log(success);
+                if (success) {
+                    const cartFetchSuccess = await fetchCart();
+                    if (cartFetchSuccess) {
+                        setToastMessage({ success: true, message: 'Item removed from your cart' });
+                    } else {
+                        setToastMessage({ success: false, message: 'Failed to update the cart' });
+                    }
                 } else {
-                    setToastMessage({ success: false, message: 'Failed to update the cart' });
+                    setToastMessage({ success: false, message: 'There was an error removing this item from your cart' });
                 }
             } else {
-                setToastMessage({ success: false, message: 'There was an error adding this item to your cart' });
+                const success = await addItemToCart(bookId, 1);
+                if (success) {
+                    const cartFetchSuccess = await fetchCart();
+                    if (cartFetchSuccess) {
+                        setToastMessage({ success: true, message: 'Item added to your cart' });
+                    } else {
+                        setToastMessage({ success: false, message: 'Failed to update the cart' });
+                    }
+                } else {
+                    setToastMessage({ success: false, message: 'There was an error adding this item to your cart' });
+                }
             }
+
         } catch (error) {
             setToastMessage({ success: false, message: 'An unexpected error occurred' });
         } finally {
@@ -68,21 +94,36 @@ const Books: React.FC = () => {
         if (!isAuthenticated) {
             setToastMessage({ success: false, message: 'Please login to add items to your wishlist' });
         } else if (bookId) {
-            const success = await addItemToWishlist(bookId);
-            if (success) {
-                const wishlistFetchSuccess = await fetchWishlist();
-                if (wishlistFetchSuccess) {
-                    setToastMessage({ success: true, message: 'Item added to your wishlist' });
+            if (isBookInWishlist(bookId)) {
+                const success = await removeItemFromWishlist(bookId);
+                if (success) {
+                    const wishlistFetchSuccess = await fetchWishlist();
+                    if (wishlistFetchSuccess) {
+                        setToastMessage({ success: true, message: 'Item removed from your wishlist' });
+                    } else {
+                        setToastMessage({ success: false, message: 'Failed to update the wishlist' });
+                    }
                 } else {
-                    setToastMessage({ success: false, message: 'Failed to update the wishlist' });
+                    setToastMessage({ success: false, message: 'There was an error removing this item from your wishlist' });
                 }
             } else {
-                if (isBookInWishlist(bookId)) {
-                    setToastMessage({ success: false, message: 'This item is already in your wishlist' });
+                const success = await addItemToWishlist(bookId);
+                if (success) {
+                    const wishlistFetchSuccess = await fetchWishlist();
+                    if (wishlistFetchSuccess) {
+                        setToastMessage({ success: true, message: 'Item added to your wishlist' });
+                    } else {
+                        setToastMessage({ success: false, message: 'Failed to update the wishlist' });
+                    }
                 } else {
-                    setToastMessage({ success: false, message: 'There was an error adding this item to your wishlist' });
+                    if (isBookInWishlist(bookId)) {
+                        setToastMessage({ success: false, message: 'This item is already in your wishlist' });
+                    } else {
+                        setToastMessage({ success: false, message: 'There was an error adding this item to your wishlist' });
+                    }
                 }
             }
+
         }
         setShowToast(true);
 
@@ -90,14 +131,6 @@ const Books: React.FC = () => {
             setShowToast(false);
         }, 3000);
     }
-
-    const isBookInCart = (bookId: string) => {
-        return cart.some((item) => item.productId._id === bookId);
-    };
-
-    const isBookInWishlist = (bookId: string) => {
-        return wishlist.some((item) => item.productId._id === bookId);
-    };
 
     if (loading) return <Loading />;
 
