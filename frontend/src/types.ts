@@ -42,7 +42,6 @@ export interface AuthContextProps {
     logout: () => void;
     isAuthenticated: boolean;
     error: string | null;
-    loading: boolean;
 }
 
 export interface CartItem {
